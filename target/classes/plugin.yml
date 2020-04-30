@@ -1,0 +1,7 @@
+name: RavagerSaddle
+version: 1.0
+main: me.relavis.ravagersaddle.RavagerSaddle
+api-version: 1.13
+authors: [relavis]
+depend: [ProtocolLib]
+description: Right click with a saddle to ride a Ravager!

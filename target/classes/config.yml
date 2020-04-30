@@ -1,0 +1,5 @@
+#RavagerSaddles config
+
+#Ravager speed
+movement-steer-speed: 1
+movement-jump-speed: 1
