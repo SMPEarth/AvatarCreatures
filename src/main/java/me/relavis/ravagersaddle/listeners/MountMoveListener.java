@@ -39,6 +39,8 @@ public class MountMoveListener implements Listener {
             Location entityLocation = entity.getLocation();
             entity.setRotation(playerEyeYaw, playerEyePitch); //Set body and head rotation of entity to match mounted player
 
+            entity.setFallDistance(0);
+
             // Jumping function
             if (jump && isOnGround(entity) && !RavagerSaddle.disablejump) {
                 Jump(entity, player, playerDirection);
@@ -90,7 +92,7 @@ public class MountMoveListener implements Listener {
         double entityRemainder = entityHeight % (1.0/16.0);
         double entityYVelocity = entity.getVelocity().getY();
 
-        return entityRemainder == 0 && entityYVelocity == 0;
+        return entityRemainder == 0; //&& entityYVelocity == 0;
     }
 
     public static void MoveEntity(Entity entity, Player p, Double speed, Vector vector, Float yaw, Float pitch) {
