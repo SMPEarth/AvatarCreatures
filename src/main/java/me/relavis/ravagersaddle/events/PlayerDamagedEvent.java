@@ -8,7 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Objects;
 
-public class DamagedEvent implements Listener {
+public class PlayerDamagedEvent implements Listener {
 
     @EventHandler
     public void onPlayerDamagedEvent(EntityDamageEvent e) {

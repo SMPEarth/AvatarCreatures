@@ -9,14 +9,9 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
-
-import java.util.HashMap;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 
 public final class RavagerSaddle extends JavaPlugin implements Listener {
 
@@ -37,8 +32,8 @@ public final class RavagerSaddle extends JavaPlugin implements Listener {
 
 
         Bukkit.getPluginManager().registerEvents(new SaddleClickEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new DamagedEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new HostileTargetEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
         Bukkit.getPluginManager().registerEvents(new MountEntityDismountEvent(), this);
         Bukkit.getPluginManager().registerEvents(new MountEntityClickEvent(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
