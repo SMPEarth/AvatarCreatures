@@ -27,8 +27,8 @@ public class MountMoveListener implements Listener {
             Location playerLocation = player.getLocation();
             Vector playerDirection = playerLocation.getDirection();
             Location playerEye = player.getEyeLocation();
-            Float playerEyeYaw = playerEye.getYaw();
-            Float playerEyePitch = playerEye.getPitch();
+            float playerEyeYaw = playerEye.getYaw();
+            float playerEyePitch = playerEye.getPitch();
 
             // Entity location, set entity's body and head rotation to match player's
                 entity.setRotation(playerEyeYaw, playerEyePitch); //Set body and head rotation of entity to match mounted player
@@ -51,6 +51,7 @@ public class MountMoveListener implements Listener {
                 }
 
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed, playerDirection, playerEyeYaw, playerEyePitch);
+                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
             if (forward < 0.0F) { // Backwards
@@ -63,6 +64,7 @@ public class MountMoveListener implements Listener {
                 }
 
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed * -1.0D, playerDirection, playerEyeYaw, playerEyePitch);
+                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
             if (sideways > 0.0F) { // Strafe left
@@ -70,6 +72,7 @@ public class MountMoveListener implements Listener {
 
                 playerDirection = playerLocation.getDirection();
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed, playerDirection, playerEyeYaw, playerEyePitch);
+                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
             if (sideways < 0.0F) { // Strafe Right
@@ -77,6 +80,7 @@ public class MountMoveListener implements Listener {
 
                 playerDirection = playerLocation.getDirection();
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed, playerDirection, playerEyeYaw, playerEyePitch);
+                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
         }
@@ -85,7 +89,7 @@ public class MountMoveListener implements Listener {
     public static boolean isOnGround(Entity entity) {
         double entityHeight = entity.getLocation().getY();
         double entityRemainder = entityHeight % (1.0/16.0);
-        double entityYVelocity = entity.getVelocity().getY();
+        //double entityYVelocity = entity.getVelocity().getY();
 
         return entityRemainder == 0; //&& entityYVelocity == 0;
     }
