@@ -51,7 +51,6 @@ public class MountMoveListener implements Listener {
                 }
 
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed, playerDirection, playerEyeYaw, playerEyePitch);
-                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
             if (forward < 0.0F) { // Backwards
@@ -64,7 +63,6 @@ public class MountMoveListener implements Listener {
                 }
 
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed * -1.0D, playerDirection, playerEyeYaw, playerEyePitch);
-                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
             if (sideways > 0.0F) { // Strafe left
@@ -72,7 +70,6 @@ public class MountMoveListener implements Listener {
 
                 playerDirection = playerLocation.getDirection();
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed, playerDirection, playerEyeYaw, playerEyePitch);
-                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
             if (sideways < 0.0F) { // Strafe Right
@@ -80,7 +77,6 @@ public class MountMoveListener implements Listener {
 
                 playerDirection = playerLocation.getDirection();
                 MoveEntity(entity, player, AvatarCreatures.movementSpeed, playerDirection, playerEyeYaw, playerEyePitch);
-                entity.setRotation(playerEyeYaw, playerEyePitch);
             }
 
         }
