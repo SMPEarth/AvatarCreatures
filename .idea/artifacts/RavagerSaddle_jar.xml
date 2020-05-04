@@ -2,7 +2,7 @@
   <artifact type="jar" build-on-make="true" name="RavagerSaddle:jar">
     <output-path>G:/Plugins/Test Servers/1.15.2/plugins</output-path>
     <root id="archive" name="RavagerSaddle.jar">
-      <element id="module-output" name="RavagerSaddle" />
+      <element id="module-output" name="AvatarCreatures" />
     </root>
   </artifact>
 </component>

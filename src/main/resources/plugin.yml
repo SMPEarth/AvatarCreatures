@@ -1,7 +1,13 @@
-name: RavagerSaddle
+name: AvatarCreatures
 version: ${project.version}
-main: me.relavis.ravagersaddle.RavagerSaddle
+main: me.relavis.avatarcreatures.AvatarCreatures
 api-version: 1.13
+prefix: AvatarCreatures
 authors: [relavis]
 depend: [ProtocolLib]
-description: Right click with a saddle to ride a Ravager!
+description: Introduces Avatar creatures to Minecraft
+
+commands:
+  appa:
+    description: Access to commands to control your Appa
+    usage: /<command>

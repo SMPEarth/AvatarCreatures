@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.relavis</groupId>
-    <artifactId>RavagerSaddle</artifactId>
+    <artifactId>AvatarCreatures</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>RavagerSaddle</name>
 
-    <description>Right click with a saddle to ride a Ravager!</description>
+    <description>Introduces Avatar creatures to Minecraft</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -85,6 +85,12 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>4.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>17.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

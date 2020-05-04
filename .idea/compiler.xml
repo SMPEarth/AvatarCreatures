@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="RavagerSaddle" />
+        <module name="AvatarCreatures" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="RavagerSaddle" target="1.8" />
+      <module name="AvatarCreatures" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

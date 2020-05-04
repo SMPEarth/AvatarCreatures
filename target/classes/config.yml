@@ -1,5 +1,13 @@
-#RavagerSaddles config
+#AvatarCreatures config
 
 #Ravager speed
 movement-steer-speed: 1
 movement-jump-speed: 1
+disable-jump: false
+
+# AvatarCreatures currently requires MySQL.
+host: "localhost"
+port: 3306
+database: "minecraft?useSSL=false"
+username: "root"
+password: "password"
