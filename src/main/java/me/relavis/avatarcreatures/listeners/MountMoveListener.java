@@ -4,16 +4,20 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.AvatarCreatures;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Ravager;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 public class MountMoveListener implements Listener {
 
     public static void onMountEntityMove(PacketEvent e) {
-        if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && e.getPlayer().getVehicle() != null) {
+        if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE  && e.getPlayer().getVehicle().toString().equals("CraftRavager")) {
 
             PacketContainer packet = e.getPacket();
             Player player = e.getPlayer();

@@ -48,6 +48,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
 
         this.getCommand("appa").setExecutor(new AppaCommand());
 
+
         FileConfiguration config = getConfig();
         movementSpeed = config.getDouble("movement-steer-speed");
         jumpSpeed = config.getDouble("movement-jump-speed");
