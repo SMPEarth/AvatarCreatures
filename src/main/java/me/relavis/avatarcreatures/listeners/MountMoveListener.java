@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 public class MountMoveListener implements Listener {
 
     public static void onMountEntityMove(PacketEvent e) {
-        if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE  && e.getPlayer().getVehicle().toString().equals("CraftRavager")) {
+        if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE  && e.getPlayer().getVehicle() instanceof Ravager) {
 
             PacketContainer packet = e.getPacket();
             Player player = e.getPlayer();
