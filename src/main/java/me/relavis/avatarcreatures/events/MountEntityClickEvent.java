@@ -23,8 +23,12 @@ public class MountEntityClickEvent implements Listener {
         Entity entity = e.getRightClicked();
         UUID entityUUID = entity.getUniqueId();
         if(entity.getType() == EntityType.RAVAGER && entity.getPassengers().isEmpty()) {
-            if(data.isOwner(playerUUID, entityUUID)){
-                entity.addPassenger(player);
+            if(data.isOwner(playerUUID, entityUUID) || player.hasPermission("avatarcreatures.appa.ride.others")){
+                if (player.hasPermission("avatarcreatures.appa.ride")) {
+                    entity.addPassenger(player);
+                } else {
+                    player.sendMessage(ChatColor.DARK_RED + "You do not have the ability to ride an Appa.");
+                }
             } else {
                 player.sendMessage(ChatColor.RED + "That's not your Appa!");
             }

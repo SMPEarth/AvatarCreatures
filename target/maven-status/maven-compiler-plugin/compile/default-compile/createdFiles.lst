@@ -12,7 +12,7 @@ me\relavis\avatarcreatures\events\PlayerQuitEvent.class
 me\relavis\avatarcreatures\events\MountEntityDeathEvent.class
 me\relavis\avatarcreatures\AvatarCreatures.class
 me\relavis\avatarcreatures\util\DebugHandler.class
+me\relavis\avatarcreatures\AvatarCreatures$2.class
 me\relavis\avatarcreatures\events\GolemTargetEvent.class
 me\relavis\avatarcreatures\events\MountEntityHostileTargetEvent.class
-me\relavis\avatarcreatures\util\EntityHandler.class
 me\relavis\avatarcreatures\AvatarCreatures$1.class

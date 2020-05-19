@@ -1,11 +1,12 @@
 #AvatarCreatures config
 
-#Ravager speed
+# Appa config
 movement-steer-speed: 1
-movement-jump-speed: 1
-disable-jump: false
 
-# AvatarCreatures currently requires MySQL.
+# AvatarCreatures can currently run through either a flat file using SQLite or a MySQL server.
+
+#Options: flatfile or mysql
+storage: flatfile
 host: "localhost"
 port: 3306
 database: "minecraft?useSSL=false"

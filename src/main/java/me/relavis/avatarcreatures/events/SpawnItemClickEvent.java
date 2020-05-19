@@ -1,11 +1,17 @@
 package me.relavis.avatarcreatures.events;
 
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.relavis.avatarcreatures.util.DataHandler;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
 import org.bukkit.event.EventHandler;
@@ -13,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -29,9 +36,18 @@ public class SpawnItemClickEvent implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (action == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND && player.getInventory().getItemInMainHand().getType() == Material.SADDLE) {
-            createEntity(event, playerUUID, "RAVAGER");
-            event.setCancelled(true);
+            if (player.hasPermission("avatarcreatures.appa.spawn")) {
+                createEntity(event, playerUUID, "RAVAGER");
+                event.setCancelled(true);
+            } else {
+                player.sendMessage(ChatColor.DARK_RED + "You do not have permission to spawn an Appa.");
+            }
         }
+    }
+
+
+    public void initPathfinder() {
+        //here goes the pathfinders you actually want
     }
 
     public void createEntity(PlayerInteractEvent event, UUID playerUUID, String type) {
@@ -47,6 +63,7 @@ public class SpawnItemClickEvent implements Listener {
             } else {
                 player.getWorld().spawn(loc.add(0.0, 1.0, 0.0), Ravager.class, entity -> {
                     entity.setRemoveWhenFarAway(false);
+                    entity.setGravity(false);
                     String playerName = player.getName();
                     entity.setCustomNameVisible(true);
                     entity.setCustomName(playerName + "'s Appa");
@@ -54,12 +71,17 @@ public class SpawnItemClickEvent implements Listener {
                     UUID entityUUID = entity.getUniqueId();
                     data.addEntityToData(playerName, playerUUID, entityUUID, type);
 
-                    Entity craftEntity = ((CraftEntity) entity).getHandle();
+                    EntityInsentient entityInsentient = (EntityInsentient) ((CraftEntity) entity).getHandle();
+                    entityInsentient.goalSelector = new PathfinderGoalSelector(entityInsentient.getWorld().getMethodProfiler());
+                    entityInsentient.targetSelector = new PathfinderGoalSelector(entityInsentient.getWorld().getMethodProfiler());
+
+                    /*
+
 
                     EntityInsentient nmsEntity = (EntityInsentient) ((CraftEntity) entity).getHandle();
                     PathfinderGoalSelector goalSelector = nmsEntity.goalSelector;
                     PathfinderGoalSelector targetSelector = nmsEntity.targetSelector;
-/*
+
                     try {
 
                         Field brField = EntityLiving.class.getDeclaredField("bo");
@@ -85,7 +107,7 @@ public class SpawnItemClickEvent implements Listener {
 
 
                     try {
-                        /*
+
                         Field dField;
                         dField = PathfinderGoalSelector.class.getDeclaredField("d");
                         dField.setAccessible(true);
@@ -95,19 +117,21 @@ public class SpawnItemClickEvent implements Listener {
                         Field cField;
                         cField = PathfinderGoalSelector.class.getDeclaredField("c");
                         cField.setAccessible(true);
-                        //dField.set(goalSelector, new LinkedHashSet<>());
+                        dField.set(goalSelector, new LinkedHashSet<>());
                         cField.set(targetSelector, new EnumMap<>(PathfinderGoal.Type.class));
 
                         Field fField;
                         fField = PathfinderGoalSelector.class.getDeclaredField("f");
                         fField.setAccessible(true);
-                        //dField.set(goalSelector, new LinkedHashSet<>());
+                        dField.set(goalSelector, new LinkedHashSet<>());
                         fField.set(targetSelector, EnumSet.noneOf(PathfinderGoal.Type.class));
 
-                    } catch (SecurityException | IllegalArgumentException e) {
+                    } catch (SecurityException | IllegalArgumentException | NoSuchFieldException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                    */
+
+                     */
+
                 });
             }
         }

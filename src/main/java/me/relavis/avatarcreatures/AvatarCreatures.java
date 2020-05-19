@@ -16,6 +16,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 
+import java.util.Objects;
+
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
     public static Double movementSpeed;
@@ -34,7 +36,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Configuration initialization successful.");
 
         DataHandler sql = new DataHandler();
-        sql.mysqlSetup();
+        sql.dataSetup();
 
         Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
@@ -46,7 +48,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         //Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
 
 
-        this.getCommand("appa").setExecutor(new AppaCommand());
+        Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
 
 
         FileConfiguration config = getConfig();
@@ -55,10 +57,14 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         disableJump = config.getBoolean("disable-jump");
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
-                ListenerPriority.NORMAL, PacketType.Play.Client.STEER_VEHICLE) {
+                ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
             public void onPacketReceiving(PacketEvent event) {
-                MountMoveListener.onMountEntityMove(event);
+                MountMoveListener.onMountEntitySteer(event);
             }
+        });
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
+                ListenerPriority.HIGHEST, PacketType.Play.Client.VEHICLE_MOVE) {
+            public void onPacketReceiving(PacketEvent event) { MountMoveListener.onMountEntityMove(event); }
         });
 
     }
@@ -67,4 +73,5 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
     }
+
 }

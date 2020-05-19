@@ -5,14 +5,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.Listener;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 
 import static java.util.UUID.fromString;
 
@@ -22,6 +23,7 @@ public class DataHandler implements Listener {
 
     private final ExecutorService service = Executors.newCachedThreadPool();
     AvatarCreatures plugin = AvatarCreatures.getPlugin(AvatarCreatures.class);
+    public String storageType = plugin.getConfig().getString("storage");
     public String host = plugin.getConfig().getString("host");
     public int port = plugin.getConfig().getInt("port");
     public String database = plugin.getConfig().getString("database");
@@ -34,21 +36,24 @@ public class DataHandler implements Listener {
     //ArrayList<Boolean> entityAlive;
     private Connection connection;
 
-    public void mysqlSetup() {
+    public void dataSetup() {
         try {
             synchronized (this) {
 
                 if (getConnection() != null && !getConnection().isClosed()) {
                     return;
                 }
-                Class.forName("com.mysql.jdbc.Driver");
+
                 setConnection();
 
-                Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "MySQL connection successful.");
-
-                asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Database connection successful.");
+                if (storageType.equals("mysql")) {
+                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
+                } else if (storageType.equals("flatfile")) {
+                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL)");
+                }
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -58,8 +63,30 @@ public class DataHandler implements Listener {
     }
 
     public void setConnection() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
-                username, password);
+        if (storageType.equals("mysql")) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                plugin.getLogger().log(Level.SEVERE, "Error setting DB connection: " + e);
+            }
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
+                    username, password);
+        } else if (storageType.equals("flatfile")) {
+            File dataFolder = new File(plugin.getDataFolder(), "storage.db");
+            if (!dataFolder.exists()) {
+                try {
+                    boolean success = dataFolder.createNewFile();
+                } catch (IOException e) {
+                    plugin.getLogger().log(Level.SEVERE, "File write error: storage.db");
+                }
+            }
+            try {
+                Class.forName("org.sqlite.JDBC");
+                connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
+            } catch (SQLException | ClassNotFoundException e) {
+                plugin.getLogger().log(Level.SEVERE, "Error setting DB connection: ", e);
+            }
+        }
     }
 
     // Check if player has any data associated with him
@@ -71,10 +98,10 @@ public class DataHandler implements Listener {
             statement.setString(1, playerUUID.toString());
 
             ResultSet results = statement.executeQuery();
-
             if (results.next()) {
                 return true;
             }
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -91,7 +118,7 @@ public class DataHandler implements Listener {
                 statement.setString(1, playerUUID.toString());
 
                 //ResultSet results = statement.executeQuery();
-
+                statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -108,8 +135,13 @@ public class DataHandler implements Listener {
             statement.setString(2, type);
 
             ResultSet results = statement.executeQuery();
+
             if (results.next()) {
+                results.close();
                 return true;
+            } else {
+                results.close();
+                return false;
             }
 
         } catch (SQLException e) {
@@ -118,7 +150,7 @@ public class DataHandler implements Listener {
         return false;
     }
 
-    
+
     public Entity getEntityByUniqueId(UUID uniqueId) {
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
@@ -140,8 +172,9 @@ public class DataHandler implements Listener {
             statement.setString(2, type);
             ResultSet results = statement.executeQuery();
             results.next();
-
-            return fromString(results.getString("entityuuid"));
+            String entityUUID = results.getString("entityuuid");
+            results.close();
+            return fromString(entityUUID);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -157,7 +190,7 @@ public class DataHandler implements Listener {
             statement.setString(1, entityUUID.toString());
             ResultSet results = statement.executeQuery();
             results.next();
-
+            results.close();
             return fromString(results.getString("playeruuid"));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -166,16 +199,16 @@ public class DataHandler implements Listener {
     }
 
     public Boolean isOwned(UUID entityUUID) {
-        try{
+        try {
             setConnection();
             PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
             statement.setString(1, entityUUID.toString());
-
             ResultSet results = statement.executeQuery();
-            if(results.next()) {
+            if (results.next()) {
                 return true;
             }
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -191,8 +224,9 @@ public class DataHandler implements Listener {
             statement.setString(2, type);
             ResultSet results = statement.executeQuery();
             results.next();
-
-            return results.getString("name");
+            String name = results.getString("name");
+            statement.close();
+            return name;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -210,7 +244,7 @@ public class DataHandler implements Listener {
                 statement.setString(2, playerUUID.toString());
                 statement.setString(3, type);
                 statement.executeUpdate();
-
+                statement.close();
                 UUID entityUUID = getEntityUUID(playerUUID, type);
                 Entity entity = getEntityByUniqueId(entityUUID);
                 entity.setCustomName(newName);
@@ -225,14 +259,21 @@ public class DataHandler implements Listener {
         this.service.execute(() -> {
             try {
                 setConnection();
-                PreparedStatement insert;
-                insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (name,playeruuid,entityuuid,type,alive) VALUE (?,?,?,?,?)");
-                insert.setString(1, playerName + "'s Appa");
-                insert.setString(2, playerUUID.toString());
-                insert.setString(3, entityUUID.toString());
-                insert.setString(4, type);
-                insert.setBoolean(5, true);
+                PreparedStatement insert = null;
+                if (storageType.equals("mysql")) {
+                    insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUE (?,?,?,?,?,?)");
+                } else if (storageType.equals("flatfile")){
+                    insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUES (?,?,?,?,?,?)");
+                }
+                assert insert != null;
+                insert.setString(1, null);
+                insert.setString(2, playerName + "'s Appa");
+                insert.setString(3, playerUUID.toString());
+                insert.setString(4, entityUUID.toString());
+                insert.setString(5, type);
+                insert.setBoolean(6, true);
                 insert.executeUpdate();
+                insert.close();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -241,16 +282,17 @@ public class DataHandler implements Listener {
 
     public void removeEntityFromData(UUID entityUUID) {
         this.service.execute(() -> {
-           try {
-               setConnection();
-               PreparedStatement statement = getConnection()
-                       .prepareStatement("DELETE FROM avatarcreatures WHERE entityuuid=?");
-               statement.setString(1, entityUUID.toString());
+            try {
+                setConnection();
+                PreparedStatement statement = getConnection()
+                        .prepareStatement("DELETE FROM avatarcreatures WHERE entityuuid=?");
+                statement.setString(1, entityUUID.toString());
 
-               statement.executeUpdate();
-           } catch (SQLException e) {
+                statement.executeUpdate();
+                statement.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-           }
+            }
         });
     }
 
@@ -264,6 +306,7 @@ public class DataHandler implements Listener {
             statement.setString(2, playerUUID.toString());
 
             statement.executeUpdate();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -274,13 +317,12 @@ public class DataHandler implements Listener {
         try {
             setConnection();
             PreparedStatement statement = getConnection()
-                        .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND entityuuid=?");
+                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND entityuuid=?");
             statement.setString(1, playerUUID.toString());
             statement.setString(2, entityUUID.toString());
-
             ResultSet results = statement.executeQuery();
-
-            if(results.next()) {
+            statement.close();
+            if (results.next()) {
                 return true;
             }
         } catch (SQLException e) {
@@ -299,13 +341,32 @@ public class DataHandler implements Listener {
             statement.setString(2, type);
             statement.setString(3, "1");
 
+
             ResultSet results = statement.executeQuery();
 
+
             if (results.next()) {
-                return true;
+                UUID entityUUID = fromString(results.getString("entityuuid"));
+                statement.close();
+                if (isAliveFromUUID(entityUUID)) {
+                    return true;
+                }
+            } else {
+                statement.close();
+                return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isAliveFromUUID(UUID entityUUID) {
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                if (entity.getUniqueId().equals(entityUUID))
+                    return true;
+            }
         }
         return false;
     }
@@ -320,6 +381,7 @@ public class DataHandler implements Listener {
                 statement.setBoolean(1, alive);
                 statement.setString(2, entityUUID.toString());
                 statement.executeUpdate();
+                statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -336,6 +398,7 @@ public class DataHandler implements Listener {
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.executeUpdate();
+            statement.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
