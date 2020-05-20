@@ -1,17 +1,12 @@
 package me.relavis.avatarcreatures.events;
 
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.relavis.avatarcreatures.util.DataHandler;
-import net.minecraft.server.v1_15_R1.*;
+import net.minecraft.server.v1_15_R1.EntityInsentient;
+import net.minecraft.server.v1_15_R1.PathfinderGoalSelector;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
 import org.bukkit.event.EventHandler;
@@ -19,10 +14,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 public class SpawnItemClickEvent implements Listener {
 
@@ -35,19 +29,14 @@ public class SpawnItemClickEvent implements Listener {
         Action action = event.getAction();
         UUID playerUUID = player.getUniqueId();
 
-        if (action == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND && player.getInventory().getItemInMainHand().getType() == Material.SADDLE) {
-            if (player.hasPermission("avatarcreatures.appa.spawn")) {
+        if (action == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
+            if (player.getInventory().getItemInMainHand().getType() == Material.SADDLE && player.hasPermission("avatarcreatures.appa.spawn")) {
                 createEntity(event, playerUUID, "RAVAGER");
                 event.setCancelled(true);
             } else {
                 player.sendMessage(ChatColor.DARK_RED + "You do not have permission to spawn an Appa.");
             }
         }
-    }
-
-
-    public void initPathfinder() {
-        //here goes the pathfinders you actually want
     }
 
     public void createEntity(PlayerInteractEvent event, UUID playerUUID, String type) {

@@ -40,6 +40,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
 
         Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
         Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
         Bukkit.getPluginManager().registerEvents(new MountEntityDismountEvent(), this);
         Bukkit.getPluginManager().registerEvents(new MountEntityClickEvent(), this);
@@ -49,12 +50,6 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
 
 
         Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
-
-
-        FileConfiguration config = getConfig();
-        movementSpeed = config.getDouble("movement-steer-speed");
-        jumpSpeed = config.getDouble("movement-jump-speed");
-        disableJump = config.getBoolean("disable-jump");
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
                 ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
