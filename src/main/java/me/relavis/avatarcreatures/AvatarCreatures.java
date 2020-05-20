@@ -20,6 +20,8 @@ import java.util.Objects;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
+    public static Double movementSpeed;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -28,7 +30,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         }
 
         saveDefaultConfig();
-
+        movementSpeed = getConfig().getDouble("appa.movement-speed");
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Configuration initialization successful.");
 
         DataHandler sql = new DataHandler();
