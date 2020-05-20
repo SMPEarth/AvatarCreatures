@@ -20,3 +20,10 @@ storage:
   database: "minecraft?useSSL=false"
   username: "root"
   password: "password"
+
+
+
+
+
+# DO NOT CHANGE THIS VALUE! This is used for internal purposes. Changing this will result in the plugin failing to load.
+version: 1

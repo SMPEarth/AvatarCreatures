@@ -17,49 +17,60 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 
 import java.util.Objects;
+import java.util.logging.Level;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
     public static Double movementSpeed;
+    public static int configVersion;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
             Bukkit.getPluginManager().disablePlugin(this);
+            getLogger().severe("Error: This plugin requires ProtocolLib. Disabling AvatarCreatures...");
         }
 
         saveDefaultConfig();
         movementSpeed = getConfig().getDouble("appa.movement-speed");
-        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Configuration initialization successful.");
+        configVersion = getConfig().getInt("version");
+        if(configVersion != 1) {
+            getLogger().severe("Error: Your config is outdated or corrupted. Please delete your config and restart the server. Disabling AvatarCreatures...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        } else {
+            getLogger().log(Level.INFO, "Configuration initialization successful.");
 
-        DataHandler sql = new DataHandler();
-        sql.dataSetup();
+            DataHandler sql = new DataHandler();
+            sql.dataSetup();
 
-        Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityDismountEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityClickEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
-        //Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
-        //Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new MountEntityDismountEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new MountEntityClickEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
+            //Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
+            //Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
 
 
-        Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
+            Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
-                ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
-            public void onPacketReceiving(PacketEvent event) {
-                MountMoveListener.onMountEntitySteer(event);
-            }
-        });
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
-                ListenerPriority.HIGHEST, PacketType.Play.Client.VEHICLE_MOVE) {
-            public void onPacketReceiving(PacketEvent event) { MountMoveListener.onMountEntityMove(event); }
-        });
-
+            ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
+                    ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
+                public void onPacketReceiving(PacketEvent event) {
+                    MountMoveListener.onMountEntitySteer(event);
+                }
+            });
+            ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
+                    ListenerPriority.HIGHEST, PacketType.Play.Client.VEHICLE_MOVE) {
+                public void onPacketReceiving(PacketEvent event) {
+                    MountMoveListener.onMountEntityMove(event);
+                }
+            });
+        }
     }
 
     @Override

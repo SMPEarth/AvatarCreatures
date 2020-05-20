@@ -4,6 +4,7 @@ import me.relavis.avatarcreatures.AvatarCreatures;
 import me.relavis.avatarcreatures.util.DataHandler;
 import net.minecraft.server.v1_15_R1.EntityInsentient;
 import net.minecraft.server.v1_15_R1.PathfinderGoalSelector;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,10 +35,12 @@ public class SpawnItemClickEvent implements Listener {
 
         if (action == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
             if (player.getInventory().getItemInMainHand().getType().equals(Material.matchMaterial(appaMaterial)) && player.hasPermission("avatarcreatures.appa.spawn")) {
-                createEntity(event, playerUUID, "RAVAGER");
-                event.setCancelled(true);
-            } else {
-                player.sendMessage(ChatColor.DARK_RED + "You do not have permission to spawn an Appa.");
+                if (player.hasPermission("avatarcreatures.appa.spawn")) {
+                    createEntity(event, playerUUID, "RAVAGER");
+                    event.setCancelled(true);
+                } else {
+                    player.sendMessage(ChatColor.DARK_RED + "You do not have permission to spawn an Appa.");
+                }
             }
         }
     }

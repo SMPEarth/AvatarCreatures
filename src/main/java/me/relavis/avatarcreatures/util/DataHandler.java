@@ -46,7 +46,7 @@ public class DataHandler implements Listener {
 
                 setConnection();
 
-                Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Database connection successful.");
+                plugin.getLogger().log(Level.INFO, "Database initialization successful.");
                 if (storageType.equals("mysql")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
                 } else if (storageType.equals("flatfile")) {
