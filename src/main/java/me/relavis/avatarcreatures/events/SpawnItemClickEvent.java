@@ -1,5 +1,6 @@
 package me.relavis.avatarcreatures.events;
 
+import me.relavis.avatarcreatures.AvatarCreatures;
 import me.relavis.avatarcreatures.util.DataHandler;
 import net.minecraft.server.v1_15_R1.EntityInsentient;
 import net.minecraft.server.v1_15_R1.PathfinderGoalSelector;
@@ -14,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -21,7 +23,8 @@ import java.util.UUID;
 public class SpawnItemClickEvent implements Listener {
 
     DataHandler data = new DataHandler();
-
+    AvatarCreatures plugin = AvatarCreatures.getPlugin(AvatarCreatures.class);
+    String appaMaterial = plugin.getConfig().getString("appa.spawn-item");
     @EventHandler
     public void onItemRightClick(PlayerInteractEvent event) {
 
@@ -30,7 +33,7 @@ public class SpawnItemClickEvent implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (action == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
-            if (player.getInventory().getItemInMainHand().getType() == Material.SADDLE && player.hasPermission("avatarcreatures.appa.spawn")) {
+            if (player.getInventory().getItemInMainHand().getType().equals(Material.matchMaterial(appaMaterial)) && player.hasPermission("avatarcreatures.appa.spawn")) {
                 createEntity(event, playerUUID, "RAVAGER");
                 event.setCancelled(true);
             } else {

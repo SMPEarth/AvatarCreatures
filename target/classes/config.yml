@@ -1,14 +1,22 @@
 #AvatarCreatures config
 
-# Appa config
-movement-steer-speed: 1
-
 # AvatarCreatures can currently run through either a flat file using SQLite or a MySQL server.
 
+appa:
+  # What item should be used to spawn in the Appa?
+  # View https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for a list of items
+  spawn-item: SADDLE
+  # How fast should the Appa move? Range from 0.0-1.0
+  movement-speed: 1.0
+  # Should the player be automatically unmounted from the Appa if it/the player is hurt?
+  unmount-when-appa-damaged: true
+  unmount-when-player-damaged: true
+
 #Options: flatfile or mysql
-storage: flatfile
-host: "localhost"
-port: 3306
-database: "minecraft?useSSL=false"
-username: "root"
-password: "password"
+storage:
+  storage-type: flatfile
+  host: "localhost"
+  port: 3306
+  database: "minecraft?useSSL=false"
+  username: "root"
+  password: "password"

@@ -23,12 +23,12 @@ public class DataHandler implements Listener {
 
     private final ExecutorService service = Executors.newCachedThreadPool();
     AvatarCreatures plugin = AvatarCreatures.getPlugin(AvatarCreatures.class);
-    public String storageType = plugin.getConfig().getString("storage");
-    public String host = plugin.getConfig().getString("host");
-    public int port = plugin.getConfig().getInt("port");
-    public String database = plugin.getConfig().getString("database");
-    public String username = plugin.getConfig().getString("username");
-    public String password = plugin.getConfig().getString("password");
+    public String storageType = plugin.getConfig().getString("storage.storage-type");
+    public String host = plugin.getConfig().getString("storage.host");
+    public int port = plugin.getConfig().getInt("storage.port");
+    public String database = plugin.getConfig().getString("storage.database");
+    public String username = plugin.getConfig().getString("storage.username");
+    public String password = plugin.getConfig().getString("storage.password");
     //ArrayList<Integer> id;
     //ArrayList<String> entityName;
     //ArrayList<UUID> playerUUID;
@@ -190,8 +190,9 @@ public class DataHandler implements Listener {
             statement.setString(1, entityUUID.toString());
             ResultSet results = statement.executeQuery();
             results.next();
+            String playerUUID = results.getString("playeruuid");
             results.close();
-            return fromString(results.getString("playeruuid"));
+            return fromString(playerUUID);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -206,9 +207,10 @@ public class DataHandler implements Listener {
             statement.setString(1, entityUUID.toString());
             ResultSet results = statement.executeQuery();
             if (results.next()) {
+                results.close();
                 return true;
             }
-            statement.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -321,8 +323,8 @@ public class DataHandler implements Listener {
             statement.setString(1, playerUUID.toString());
             statement.setString(2, entityUUID.toString());
             ResultSet results = statement.executeQuery();
-            statement.close();
             if (results.next()) {
+                results.close();
                 return true;
             }
         } catch (SQLException e) {

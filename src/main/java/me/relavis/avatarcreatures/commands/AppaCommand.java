@@ -47,7 +47,7 @@ public class AppaCommand implements TabExecutor {
                                     sender.sendMessage(ChatColor.RED + "That name is too long to use!");
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + "Your Appa is away! Use " + ChatColor.GOLD + "/appa call" + ChatColor.RED + " to call your Appa.");
+                                sender.sendMessage(ChatColor.RED + "Your Appa is away! Use " + ChatColor.GOLD + "/appa call" + ChatColor.RED + " to call your Appa.");
                             }
                         } else {
                             sender.sendMessage(ChatColor.RED + "You don't have an Appa!");
@@ -57,12 +57,16 @@ public class AppaCommand implements TabExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("away")) {
                     if (player.hasPermission("avatarcreatures.appa.away")) {
-                        if (data.isAlive(playerUUID, type)) {
-                            UUID entityUUID = data.getEntityUUID(playerUUID, type);
-                            Entity entity = data.getEntityByUniqueId(entityUUID);
-                            entity.remove();
-                            data.setAlive(entityUUID, false);
-                            sender.sendMessage(ChatColor.GREEN + "Your Appa flies away.");
+                        if (data.entityExists(playerUUID, type)) {
+                            if (data.isAlive(playerUUID, type)) {
+                                UUID entityUUID = data.getEntityUUID(playerUUID, type);
+                                Entity entity = data.getEntityByUniqueId(entityUUID);
+                                entity.remove();
+                                data.setAlive(entityUUID, false);
+                                sender.sendMessage(ChatColor.GREEN + "Your Appa flies away.");
+                            } else {
+                                sender.sendMessage(ChatColor.RED + "Your Appa is away! Use " + ChatColor.GOLD + "/appa call" + ChatColor.RED + " to call your Appa.");
+                            }
                         } else {
                             sender.sendMessage(ChatColor.RED + "You don't have an Appa!");
                         }
@@ -84,6 +88,7 @@ public class AppaCommand implements TabExecutor {
                                 if (data.entityExists(playerUUID, type)) { // Check if the user has already had a mount entity. If so:
                                     player.getWorld().spawn(player.getLocation().add(0.0, 1.0, 0.0), Ravager.class, entity -> { // Spawn entity
                                         entity.setRemoveWhenFarAway(false);
+                                        entity.setGravity(false);
                                         entity.setCustomNameVisible(true);
                                         entity.setCustomName(data.getEntityName(playerUUID, type)); // Change entity name to whatever is in DB
                                         UUID entityUUID = entity.getUniqueId(); // Get new entity UUID
