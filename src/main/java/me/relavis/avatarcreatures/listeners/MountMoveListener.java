@@ -97,20 +97,16 @@ public class MountMoveListener implements Listener {
     }
 
     public static void MoveEntity(Player player, Entity entity, double speed, Vector vector) {
+        //Original method:
         //entity.setVelocity(vector.normalize().multiply(speed));
 
-        //Bukkit.broadcastMessage(vector.toString());
         Location playerEye = player.getEyeLocation();
         float playerEyeYaw = playerEye.getYaw();
         float playerEyePitch = playerEye.getPitch();
-        double x = entity.getLocation().getX();
-        double y = entity.getLocation().getY();
-        double z = entity.getLocation().getZ();
 
         double xAdd = vector.getX();
         double yAdd = vector.getY();
         double zAdd = vector.getZ();
-        //(EntityInsentient) ((CraftEntity) entity).setRotation(playerEyeYaw, playerEyePitch);
         ((CraftEntity) entity).getHandle().setMot(xAdd, yAdd, zAdd);
         entity.setRotation(playerEyeYaw, playerEyePitch);
     }
