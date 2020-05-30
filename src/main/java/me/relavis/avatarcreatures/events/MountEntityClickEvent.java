@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class MountEntityClickEvent implements Listener {
         UUID playerUUID = player.getUniqueId();
         Entity entity = e.getRightClicked();
         UUID entityUUID = entity.getUniqueId();
-        if(entity.getType() == EntityType.RAVAGER && entity.getPassengers().isEmpty()) {
+        if(entity.getType() == EntityType.RAVAGER && entity.getPassengers().isEmpty() && e.getHand().equals(EquipmentSlot.HAND)) {
             if(data.isOwner(playerUUID, entityUUID) || player.hasPermission("avatarcreatures.appa.ride.others")){
                 if (player.hasPermission("avatarcreatures.appa.ride")) {
                     entity.addPassenger(player);
