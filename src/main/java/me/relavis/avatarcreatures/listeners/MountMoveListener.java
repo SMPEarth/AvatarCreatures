@@ -1,9 +1,12 @@
 package me.relavis.avatarcreatures.listeners;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.AvatarCreatures;
+import net.minecraft.server.v1_15_R1.Packet;
+import net.minecraft.server.v1_15_R1.PacketPlayOutEntityHeadRotation;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
@@ -12,8 +15,10 @@ import org.bukkit.entity.Ravager;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
-public class MountMoveListener implements Listener {
+import java.lang.reflect.InvocationTargetException;
 
+public class MountMoveListener implements Listener {
+    AvatarCreatures avatarCreatures = new AvatarCreatures();
     public static void onMountEntitySteer(PacketEvent e) {
         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && e.getPlayer().getVehicle() instanceof Ravager) {
 
@@ -78,7 +83,7 @@ public class MountMoveListener implements Listener {
     }
 
     public static void onMountEntityMove(PacketEvent e) {
-        if (e.getPacketType() == PacketType.Play.Client.VEHICLE_MOVE && e.getPlayer().getVehicle() instanceof Ravager) {
+        if (e.getPacketType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION && e.getPlayer().getVehicle() instanceof Ravager) {
             PacketContainer packet = e.getPacket();
             Player player = e.getPlayer();
             Location playerEye = player.getEyeLocation();
@@ -88,11 +93,6 @@ public class MountMoveListener implements Listener {
                     .write(1, playerEye.getPitch());
 
             e.setPacket(packet);
-/*
-            int entityId = e.getPlayer().getVehicle().getEntityId();
-            PacketPlayOutEntityVelocity packet2 = new PacketPlayOutEntityVelocity(entityId, new Vec3D(0, 0.5, 0) );
-            ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet2);
-  */
         }
     }
 
@@ -109,5 +109,22 @@ public class MountMoveListener implements Listener {
         double zAdd = vector.getZ();
         ((CraftEntity) entity).getHandle().setMot(xAdd, yAdd, zAdd);
         entity.setRotation(playerEyeYaw, playerEyePitch);
+        UpdateClientView(entity, player, playerEyeYaw);
+    }
+
+    public static void UpdateClientView(Entity entity, Player player, float playerEyeYaw) {
+        PacketContainer packet = new PacketContainer(
+                PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+        int entityID = entity.getEntityId();
+        packet.getIntegers()
+                .write(0, entityID);
+        packet.getFloat()
+                .write(1, playerEyeYaw);
+        try {
+            ProtocolLibrary.getProtocolManager()
+                    .sendServerPacket(player, packet);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }
