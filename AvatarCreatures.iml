@@ -5,9 +5,9 @@
       <configuration>
         <userChosenTypes>
           <map>
-            <entry key="PAPER" value="false" />
-            <entry key="SPIGOT" value="true" />
             <entry key="BUKKIT" value="false" />
+            <entry key="SPIGOT" value="true" />
+            <entry key="PAPER" value="false" />
           </map>
         </userChosenTypes>
         <autoDetectTypes>

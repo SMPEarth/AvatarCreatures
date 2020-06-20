@@ -5,8 +5,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.AvatarCreatures;
-import net.minecraft.server.v1_15_R1.Packet;
-import net.minecraft.server.v1_15_R1.PacketPlayOutEntityHeadRotation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
@@ -20,8 +18,11 @@ import org.bukkit.util.Vector;
 import java.lang.reflect.InvocationTargetException;
 
 public class MountMoveListener implements Listener {
-    AvatarCreatures avatarCreatures = new AvatarCreatures();
+    public static Double movementSpeed;
+    AvatarCreatures avatarCreatures = AvatarCreatures.getInstance();
+
     public static void onMountEntitySteer(PacketEvent e) {
+        movementSpeed = avatarCreatures.getConfig().getDouble("appa.movement-speed");
         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && e.getPlayer().getVehicle() instanceof Ravager) {
 
             PacketContainer packet = e.getPacket();
@@ -133,14 +134,14 @@ public class MountMoveListener implements Listener {
  */
         PacketContainer enforceRotation1 = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
         enforceRotation1.getIntegers().writeSafely(0, entity.getEntityId());
-        enforceRotation1.getBytes().writeSafely(0, (byte) (playerEyeYaw*256F / 360F));
+        enforceRotation1.getBytes().writeSafely(0, (byte) (playerEyeYaw * 256F / 360F));
 
         PacketContainer enforceRotation2 = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_LOOK);
         enforceRotation2.getIntegers().writeSafely(0, entity.getEntityId());
-        enforceRotation2.getBytes().writeSafely(0, (byte) (playerEyeYaw*256F / 360F));
-        enforceRotation2.getBytes().writeSafely(1, (byte) (playerEyePitch*256F / 360F));
+        enforceRotation2.getBytes().writeSafely(0, (byte) (playerEyeYaw * 256F / 360F));
+        enforceRotation2.getBytes().writeSafely(1, (byte) (playerEyePitch * 256F / 360F));
         try {
-            Bukkit.broadcastMessage("Yaw " + playerEyeYaw*256F / 360F + " pitch " + playerEyePitch*256F / 360F);
+            Bukkit.broadcastMessage("Yaw " + playerEyeYaw * 256F / 360F + " pitch " + playerEyePitch * 256F / 360F);
             ProtocolLibrary.getProtocolManager()
                     .sendServerPacket(player, enforceRotation1);
             ProtocolLibrary.getProtocolManager()

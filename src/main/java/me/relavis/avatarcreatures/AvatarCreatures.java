@@ -18,10 +18,17 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
+    private static AvatarCreatures instance;
+
+
+    public static AvatarCreatures getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
         // Plugin startup logic
+        instance = this;
 
         saveDefaultConfig();
         int configVersion = getConfig().getInt("version");
