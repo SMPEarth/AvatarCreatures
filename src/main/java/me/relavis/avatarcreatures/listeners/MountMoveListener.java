@@ -7,8 +7,10 @@ import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.AvatarCreatures;
 import net.minecraft.server.v1_15_R1.Packet;
 import net.minecraft.server.v1_15_R1.PacketPlayOutEntityHeadRotation;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftRavager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
@@ -108,12 +110,13 @@ public class MountMoveListener implements Listener {
         double yAdd = vector.getY();
         double zAdd = vector.getZ();
         ((CraftEntity) entity).getHandle().setMot(xAdd, yAdd, zAdd);
+        ((CraftRavager) entity).getHandle().yaw = player.getLocation().getYaw();
         entity.setRotation(playerEyeYaw, playerEyePitch);
-        UpdateClientView(entity, player, playerEyeYaw);
+        UpdateClientView(entity, player, playerEyeYaw, playerEyePitch);
     }
 
-    public static void UpdateClientView(Entity entity, Player player, float playerEyeYaw) {
-        PacketContainer packet = new PacketContainer(
+    public static void UpdateClientView(Entity entity, Player player, float playerEyeYaw, float playerEyePitch) {
+/*        PacketContainer packet = new PacketContainer(
                 PacketType.Play.Server.ENTITY_HEAD_ROTATION);
         int entityID = entity.getEntityId();
         packet.getIntegers()
@@ -123,6 +126,25 @@ public class MountMoveListener implements Listener {
         try {
             ProtocolLibrary.getProtocolManager()
                     .sendServerPacket(player, packet);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+ */
+        PacketContainer enforceRotation1 = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+        enforceRotation1.getIntegers().writeSafely(0, entity.getEntityId());
+        enforceRotation1.getBytes().writeSafely(0, (byte) (playerEyeYaw*256F / 360F));
+
+        PacketContainer enforceRotation2 = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_LOOK);
+        enforceRotation2.getIntegers().writeSafely(0, entity.getEntityId());
+        enforceRotation2.getBytes().writeSafely(0, (byte) (playerEyeYaw*256F / 360F));
+        enforceRotation2.getBytes().writeSafely(1, (byte) (playerEyePitch*256F / 360F));
+        try {
+            Bukkit.broadcastMessage("Yaw " + playerEyeYaw*256F / 360F + " pitch " + playerEyePitch*256F / 360F);
+            ProtocolLibrary.getProtocolManager()
+                    .sendServerPacket(player, enforceRotation1);
+            ProtocolLibrary.getProtocolManager()
+                    .sendServerPacket(player, enforceRotation2);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }

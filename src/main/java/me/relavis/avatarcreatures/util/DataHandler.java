@@ -1,10 +1,11 @@
 package me.relavis.avatarcreatures.util;
 
+import com.zaxxer.hikari.HikariDataSource;
 import me.relavis.avatarcreatures.AvatarCreatures;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import java.io.File;
@@ -29,14 +30,20 @@ public class DataHandler implements Listener {
     public String database = plugin.getConfig().getString("storage.database");
     public String username = plugin.getConfig().getString("storage.username");
     public String password = plugin.getConfig().getString("storage.password");
-    //ArrayList<Integer> id;
-    //ArrayList<String> entityName;
-    //ArrayList<UUID> playerUUID;
-    //ArrayList<EntityType> entityType;
-    //ArrayList<Boolean> entityAlive;
+    private HikariDataSource hikari;
+
     private Connection connection;
 
     public void dataSetup() {
+        DataHandler instance = this;
+
+        hikari = new HikariDataSource();
+        hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+        hikari.addDataSourceProperty("serverName", host);
+        hikari.addDataSourceProperty("port", port);
+        hikari.addDataSourceProperty("databaseName", database);
+        hikari.addDataSourceProperty("user", username);
+        hikari.addDataSourceProperty("password", password);
         try {
             synchronized (this) {
 
@@ -65,12 +72,11 @@ public class DataHandler implements Listener {
     public void setConnection() throws SQLException {
         if (storageType.equals("mysql")) {
             try {
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.zaxxer.hikari.HikariDataSource");
             } catch (ClassNotFoundException e) {
                 plugin.getLogger().log(Level.SEVERE, "Error setting DB connection: " + e);
             }
-            connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
-                    username, password);
+            connection = hikari.getConnection();
         } else if (storageType.equals("flatfile")) {
             File dataFolder = new File(plugin.getDataFolder(), "storage.db");
             if (!dataFolder.exists()) {
@@ -109,10 +115,11 @@ public class DataHandler implements Listener {
     }
 
     // For future use - initialize the player data on server join
-    public void initializePlayerData(UUID playerUUID) {
+    public void initializePlayerData(Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 setConnection();
+                UUID playerUUID = player.getUniqueId();
                 PreparedStatement statement = getConnection()
                         .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid = ?");
                 statement.setString(1, playerUUID.toString());
@@ -264,7 +271,7 @@ public class DataHandler implements Listener {
                 PreparedStatement insert = null;
                 if (storageType.equals("mysql")) {
                     insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUE (?,?,?,?,?,?)");
-                } else if (storageType.equals("flatfile")){
+                } else if (storageType.equals("flatfile")) {
                     insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUES (?,?,?,?,?,?)");
                 }
                 assert insert != null;
@@ -391,21 +398,15 @@ public class DataHandler implements Listener {
     }
 
     public void asyncUpdate(String query) {
-        // The ExecutorService will execute your sync MySQL update asynchronously.
-        this.service.execute(() -> this.syncUpdate(query));
+        this.service.execute(() -> {
+            try {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.executeUpdate();
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
-
-    private void syncUpdate(String query) {
-        // Work with PreparedStatements to prevent SQL injections.
-        try {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.executeUpdate();
-            statement.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }
 

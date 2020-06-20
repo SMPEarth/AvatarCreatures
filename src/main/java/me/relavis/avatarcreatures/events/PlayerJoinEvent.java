@@ -12,7 +12,6 @@ public class PlayerJoinEvent implements Listener {
     @EventHandler
     public void onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent e) {
 
-
     }
 
 }

@@ -1,49 +1,41 @@
 package me.relavis.avatarcreatures;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import me.relavis.avatarcreatures.commands.AppaCommand;
-import me.relavis.avatarcreatures.events.*;
-import me.relavis.avatarcreatures.listeners.*;
-import me.relavis.avatarcreatures.util.DataHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.java.JavaPlugin;
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-
-import org.bukkit.configuration.file.FileConfiguration;
+import me.relavis.avatarcreatures.commands.AppaCommand;
+import me.relavis.avatarcreatures.events.*;
+import me.relavis.avatarcreatures.listeners.MountMoveListener;
+import me.relavis.avatarcreatures.util.DataHandler;
+import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.logging.Level;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
-    public static Double movementSpeed;
-    public static int configVersion;
-
     @Override
     public void onEnable() {
         // Plugin startup logic
-        if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-            Bukkit.getPluginManager().disablePlugin(this);
-            getLogger().severe("Error: This plugin requires ProtocolLib. Disabling AvatarCreatures...");
-        }
 
         saveDefaultConfig();
-        movementSpeed = getConfig().getDouble("appa.movement-speed");
-        configVersion = getConfig().getInt("version");
-        if(configVersion != 1) {
+        int configVersion = getConfig().getInt("version");
+        if (configVersion != 1) {
             getLogger().severe("Error: Your config is outdated or corrupted. Please delete your config and restart the server. Disabling AvatarCreatures...");
             Bukkit.getPluginManager().disablePlugin(this);
-            return;
+        } else if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            getLogger().severe("Error: This plugin requires ProtocolLib. Disabling AvatarCreatures...");
         } else {
             getLogger().log(Level.INFO, "Configuration initialization successful.");
 
-            DataHandler sql = new DataHandler();
-            sql.dataSetup();
+            DataHandler data = new DataHandler();
+            data.dataSetup();
 
             Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
@@ -70,6 +62,9 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
                     MountMoveListener.onMountEntityMove(event);
                 }
             });
+
+            int pluginId = 7715;
+            Metrics metrics = new Metrics(this, pluginId);
         }
     }
 
