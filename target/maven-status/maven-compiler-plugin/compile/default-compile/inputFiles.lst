@@ -1,12 +1,12 @@
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\ConfigHandler.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\DataHandler.java
+C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\NewDataHandler.java
+C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\PlayerData.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\GolemTargetEvent.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\listeners\MountMoveListener.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\MountEntityDamagedEvent.java
-C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\DebugHandler.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\PlayerDamagedEvent.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\PlayerJoinEvent.java
-C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\MountEntityDismountEvent.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\AvatarCreatures.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\PlayerQuitEvent.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\SpawnItemClickEvent.java

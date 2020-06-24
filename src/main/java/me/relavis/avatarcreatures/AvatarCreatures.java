@@ -21,7 +21,7 @@ import java.util.logging.Level;
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
     private static AvatarCreatures instance;
-    ConfigHandler config = ConfigHandler.getInstance();
+    ConfigHandler config = new ConfigHandler();
 
     public static AvatarCreatures getInstance() {
         return instance;
