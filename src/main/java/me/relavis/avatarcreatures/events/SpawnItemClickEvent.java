@@ -1,6 +1,7 @@
 package me.relavis.avatarcreatures.events;
 
 import me.relavis.avatarcreatures.AvatarCreatures;
+import me.relavis.avatarcreatures.util.ConfigHandler;
 import me.relavis.avatarcreatures.util.DataHandler;
 import net.minecraft.server.v1_15_R1.EntityInsentient;
 import net.minecraft.server.v1_15_R1.PathfinderGoalSelector;
@@ -9,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
 import org.bukkit.event.EventHandler;
@@ -23,9 +25,8 @@ import java.util.UUID;
 
 public class SpawnItemClickEvent implements Listener {
 
-    DataHandler data = new DataHandler();
-    AvatarCreatures plugin = AvatarCreatures.getPlugin(AvatarCreatures.class);
-    String appaMaterial = plugin.getConfig().getString("appa.spawn-item");
+    DataHandler data = DataHandler.getInstance();
+    ConfigHandler config = ConfigHandler.getInstance();
     @EventHandler
     public void onItemRightClick(PlayerInteractEvent event) {
 
@@ -34,9 +35,9 @@ public class SpawnItemClickEvent implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (action == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
-            if (player.getInventory().getItemInMainHand().getType().equals(Material.matchMaterial(appaMaterial)) && player.hasPermission("avatarcreatures.appa.spawn")) {
+            if (player.getInventory().getItemInMainHand().getType().equals(Material.matchMaterial(config.getAppaConfig("spawnItem"))) && player.hasPermission("avatarcreatures.appa.spawn")) {
                 if (player.hasPermission("avatarcreatures.appa.spawn")) {
-                    createEntity(event, playerUUID, "RAVAGER");
+                    createEntity(event, playerUUID, EntityType.RAVAGER);
                     event.setCancelled(true);
                 } else {
                     player.sendMessage(ChatColor.DARK_RED + "You do not have permission to spawn an Appa.");
@@ -45,7 +46,7 @@ public class SpawnItemClickEvent implements Listener {
         }
     }
 
-    public void createEntity(PlayerInteractEvent event, UUID playerUUID, String type) {
+    public void createEntity(PlayerInteractEvent event, UUID playerUUID, EntityType type) {
         Player player = event.getPlayer();
         Location loc = Objects.requireNonNull(event.getClickedBlock()).getLocation();
         boolean isAlive = data.isAlive(playerUUID, type);

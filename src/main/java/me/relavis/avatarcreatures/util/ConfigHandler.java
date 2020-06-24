@@ -1,11 +1,7 @@
 package me.relavis.avatarcreatures.util;
 
 import me.relavis.avatarcreatures.AvatarCreatures;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
-import java.util.List;
-import java.util.Objects;
+import org.bukkit.entity.EntityType;
 
 public class ConfigHandler {
     //TODO create config handler
@@ -24,6 +20,12 @@ public class ConfigHandler {
     String password;
 
     int version;
+
+    EntityType[] enabledMounts;
+
+    public static ConfigHandler getInstance() {
+        return instance;
+    }
 
     public void configSetup() {
         AvatarCreatures plugin = AvatarCreatures.getInstance();
@@ -46,7 +48,7 @@ public class ConfigHandler {
     }
 
     public String getAppaConfig(String message) {
-        switch(message) {
+        switch (message) {
             case "spawnItem":
                 return appaSpawnItem;
             case "movementSpeed":
@@ -81,9 +83,5 @@ public class ConfigHandler {
 
     public int getVersion() {
         return version;
-    }
-
-    public static ConfigHandler getInstance() {
-        return instance;
     }
 }

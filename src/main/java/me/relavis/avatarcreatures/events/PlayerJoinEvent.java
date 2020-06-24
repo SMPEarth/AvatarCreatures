@@ -5,8 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class PlayerJoinEvent implements Listener {
-    DataHandler data = new DataHandler();
-
+    DataHandler data = DataHandler.getInstance();
 
     // For future use - initialize player data on server join
     @EventHandler

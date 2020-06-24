@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class MountEntityDeathEvent implements Listener {
 
-    DataHandler data = new DataHandler();
+    DataHandler data = DataHandler.getInstance();
     @EventHandler
     public void onMountEntityDeath(EntityDeathEvent e) {
         UUID entityUUID = e.getEntity().getUniqueId();

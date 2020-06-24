@@ -1,7 +1,5 @@
 #AvatarCreatures config
 
-# AvatarCreatures can currently run through either a flat file using SQLite or a MySQL server.
-
 appa:
   # What item should be used to spawn in the Appa?
   # View https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for a list of items
@@ -11,6 +9,8 @@ appa:
   # Should the player be automatically unmounted from the Appa if it/the player is hurt?
   unmount-when-appa-damaged: true
   unmount-when-player-damaged: true
+
+# AvatarCreatures can currently run through either a flat file using SQLite or a MySQL server.
 
 #Options: flatfile or mysql
 storage:

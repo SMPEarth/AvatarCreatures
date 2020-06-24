@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
 import org.jetbrains.annotations.NotNull;
@@ -20,14 +21,14 @@ import java.util.UUID;
 
 public class AppaCommand implements TabExecutor {
 
-    DataHandler data = new DataHandler();
+    DataHandler data = DataHandler.getInstance();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             UUID playerUUID = player.getUniqueId();
-            String type = "RAVAGER";
+            EntityType type = EntityType.RAVAGER;
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("rename")) {
                     if (player.hasPermission("avatarcreatures.appa.rename")) {

@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.commands.AppaCommand;
 import me.relavis.avatarcreatures.events.*;
 import me.relavis.avatarcreatures.listeners.MountMoveListener;
+import me.relavis.avatarcreatures.util.ConfigHandler;
 import me.relavis.avatarcreatures.util.DataHandler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -18,8 +19,9 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
-    private static AvatarCreatures instance;
 
+    private static AvatarCreatures instance;
+    ConfigHandler config = ConfigHandler.getInstance();
 
     public static AvatarCreatures getInstance() {
         return instance;
@@ -30,9 +32,8 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         // Plugin startup logic
         instance = this;
 
-        saveDefaultConfig();
-        int configVersion = getConfig().getInt("version");
-        if (configVersion != 1) {
+        config.configSetup();
+        if (config.getVersion() != 1) {
             getLogger().severe("Error: Your config is outdated or corrupted. Please delete your config and restart the server. Disabling AvatarCreatures...");
             Bukkit.getPluginManager().disablePlugin(this);
         } else if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
@@ -48,7 +49,6 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
             Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new MountEntityDismountEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityClickEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
             //Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);

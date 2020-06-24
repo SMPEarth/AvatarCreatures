@@ -3,9 +3,10 @@ package me.relavis.avatarcreatures.events;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.Ravager;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
 
-public class GolemTargetEvent {
+public class GolemTargetEvent implements Listener {
 
     @EventHandler
     public void onHostileTarget(EntityTargetEvent e) {

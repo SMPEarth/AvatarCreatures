@@ -4,11 +4,10 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import me.relavis.avatarcreatures.AvatarCreatures;
+import me.relavis.avatarcreatures.util.ConfigHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftRavager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
@@ -17,19 +16,20 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 
+import static java.lang.Double.parseDouble;
+
 public class MountMoveListener implements Listener {
-    public static Double movementSpeed;
-    AvatarCreatures avatarCreatures = AvatarCreatures.getInstance();
+
+    static ConfigHandler config = ConfigHandler.getInstance();
+
 
     public static void onMountEntitySteer(PacketEvent e) {
-        movementSpeed = avatarCreatures.getConfig().getDouble("appa.movement-speed");
         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && e.getPlayer().getVehicle() instanceof Ravager) {
-
+            Double movementSpeed = Double.parseDouble(config.getAppaConfig("movementSpeed"));
             PacketContainer packet = e.getPacket();
             Player player = e.getPlayer();
             Entity entity = player.getVehicle();
 
-            Boolean jump = packet.getBooleans().read(0); // Jump packet.
             Float sideways = packet.getFloat().read(0); // Left and right packet. Left is positive.
             Float forward = packet.getFloat().read(1); // Forwards/backwards packet. Forwards is positive.
 
@@ -53,7 +53,7 @@ public class MountMoveListener implements Listener {
                     playerLocation.setYaw(playerEyeYaw - 45.0F);
                 }
 
-                MoveEntity(player, entity, AvatarCreatures.movementSpeed, playerDirection);
+                moveEntity(player, entity, movementSpeed, playerDirection);
             }
 
             if (forward < 0.0F) { // Backwards
@@ -65,21 +65,21 @@ public class MountMoveListener implements Listener {
                     playerLocation.setYaw(playerLocation.getYaw() + 45.0F);
                 }
 
-                MoveEntity(player, entity, AvatarCreatures.movementSpeed * -1.0D, playerDirection);
+                moveEntity(player, entity, parseDouble(config.getAppaConfig("movementSpeed")) * -1.0D, playerDirection);
             }
 
             if (sideways > 0.0F) { // Strafe left
                 playerLocation.setYaw(playerLocation.getYaw() - 90.0F);
 
                 playerDirection = playerLocation.getDirection();
-                MoveEntity(player, entity, AvatarCreatures.movementSpeed, playerDirection);
+                moveEntity(player, entity, parseDouble(config.getAppaConfig("movementSpeed")), playerDirection);
             }
 
             if (sideways < 0.0F) { // Strafe Right
                 playerLocation.setYaw(playerLocation.getYaw() + 90.0F);
 
                 playerDirection = playerLocation.getDirection();
-                MoveEntity(player, entity, AvatarCreatures.movementSpeed, playerDirection);
+                moveEntity(player, entity, parseDouble(config.getAppaConfig("movementSpeed")), playerDirection);
             }
 
         }
@@ -99,7 +99,7 @@ public class MountMoveListener implements Listener {
         }
     }
 
-    public static void MoveEntity(Player player, Entity entity, double speed, Vector vector) {
+    public static void moveEntity(Player player, Entity entity, double speed, Vector vector) {
         //Original method:
         //entity.setVelocity(vector.normalize().multiply(speed));
 
@@ -107,16 +107,14 @@ public class MountMoveListener implements Listener {
         float playerEyeYaw = playerEye.getYaw();
         float playerEyePitch = playerEye.getPitch();
 
-        double xAdd = vector.getX();
+        double xAdd = vector.getX() + speed;
         double yAdd = vector.getY();
-        double zAdd = vector.getZ();
+        double zAdd = vector.getZ() + speed;
         ((CraftEntity) entity).getHandle().setMot(xAdd, yAdd, zAdd);
-        ((CraftRavager) entity).getHandle().yaw = player.getLocation().getYaw();
-        entity.setRotation(playerEyeYaw, playerEyePitch);
-        UpdateClientView(entity, player, playerEyeYaw, playerEyePitch);
+        updateClientView(entity, player, playerEyeYaw, playerEyePitch);
     }
 
-    public static void UpdateClientView(Entity entity, Player player, float playerEyeYaw, float playerEyePitch) {
+    public static void updateClientView(Entity entity, Player player, float playerEyeYaw, float playerEyePitch) {
 /*        PacketContainer packet = new PacketContainer(
                 PacketType.Play.Server.ENTITY_HEAD_ROTATION);
         int entityID = entity.getEntityId();
