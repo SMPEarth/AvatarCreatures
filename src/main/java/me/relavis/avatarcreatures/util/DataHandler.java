@@ -120,10 +120,10 @@ public class DataHandler implements Listener {
     }
 
 
-    public Entity getEntityByUniqueId(UUID uniqueId) {
+    public Entity getEntityByUniqueId(UUID entityUUID) {
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
-                if (entity.getUniqueId().equals(uniqueId))
+                if (entity.getUniqueId().equals(entityUUID))
                     return entity;
             }
         }
