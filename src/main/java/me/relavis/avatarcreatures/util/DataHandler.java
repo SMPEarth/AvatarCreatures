@@ -102,7 +102,6 @@ public class DataHandler implements Listener {
     // Check if entity with owner and type exists
     public boolean entityExists(UUID playerUUID, EntityType type) {
         try {
-            setConnection();
             PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND type=?");
             statement.setString(1, playerUUID.toString());
@@ -139,8 +138,7 @@ public class DataHandler implements Listener {
     // Get entity UUID
     public UUID getEntityUUID(UUID playerUUID, EntityType type) {
         try {
-            setConnection();
-            PreparedStatement statement = connection
+            PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid = ? AND type = ?");
             statement.setString(1, playerUUID.toString());
             statement.setString(2, type.toString());
@@ -158,8 +156,7 @@ public class DataHandler implements Listener {
     // Get player UUID
     public UUID getEntityOwnerUUID(UUID entityUUID) {
         try {
-            setConnection();
-            PreparedStatement statement = connection
+            PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
             statement.setString(1, entityUUID.toString());
             ResultSet results = statement.executeQuery();
@@ -175,7 +172,6 @@ public class DataHandler implements Listener {
 
     public Boolean isOwned(UUID entityUUID) {
         try {
-            setConnection();
             PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
             statement.setString(1, entityUUID.toString());
@@ -213,7 +209,6 @@ public class DataHandler implements Listener {
     public void setEntityName(UUID playerUUID, EntityType type, String newName) {
         this.service.execute(() -> {
             try {
-                setConnection();
                 PreparedStatement statement = getConnection()
                         .prepareStatement("UPDATE avatarcreatures SET name=? WHERE playeruuid=? AND type=?");
                 statement.setString(1, newName);
@@ -234,7 +229,6 @@ public class DataHandler implements Listener {
     public void addEntityToData(String playerName, UUID playerUUID, UUID entityUUID, EntityType type) {
         this.service.execute(() -> {
             try {
-                setConnection();
                 PreparedStatement insert = null;
                 if (storageType.equals("mysql")) {
                     insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUE (?,?,?,?,?,?)");
@@ -259,7 +253,6 @@ public class DataHandler implements Listener {
     public void removeEntityFromData(UUID entityUUID) {
         this.service.execute(() -> {
             try {
-                setConnection();
                 PreparedStatement statement = getConnection()
                         .prepareStatement("DELETE FROM avatarcreatures WHERE entityuuid=?");
                 statement.setString(1, entityUUID.toString());
@@ -275,7 +268,6 @@ public class DataHandler implements Listener {
     // After a player has had their entity respawned, update to its new UUID
     public void updateEntityUUID(UUID playerUUID, UUID newUUID) {
         try {
-            setConnection();
             PreparedStatement statement = getConnection()
                     .prepareStatement("UPDATE avatarcreatures SET entityuuid=? WHERE playeruuid=?");
             statement.setString(1, newUUID.toString());
@@ -291,7 +283,6 @@ public class DataHandler implements Listener {
     // Check if player is the owner of entity
     public boolean isOwner(UUID playerUUID, UUID entityUUID) {
         try {
-            setConnection();
             PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND entityuuid=?");
             statement.setString(1, playerUUID.toString());
@@ -310,7 +301,6 @@ public class DataHandler implements Listener {
     // Check if entity of certain player and type is alive
     public boolean isAlive(UUID playerUUID, EntityType type) {
         try {
-            setConnection();
             PreparedStatement statement = getConnection()
                     .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND type=? AND alive=?");
             statement.setString(1, playerUUID.toString());
@@ -351,7 +341,6 @@ public class DataHandler implements Listener {
     public void setAlive(UUID entityUUID, Boolean alive) {
         this.service.execute(() -> {
             try {
-                setConnection();
                 PreparedStatement statement = getConnection()
                         .prepareStatement("UPDATE avatarcreatures SET alive=? WHERE entityuuid=?");
                 statement.setBoolean(1, alive);

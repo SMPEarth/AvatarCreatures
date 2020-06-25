@@ -65,21 +65,21 @@ public class MountMoveListener implements Listener {
                     playerLocation.setYaw(playerLocation.getYaw() + 45.0F);
                 }
 
-                moveEntity(player, entity, parseDouble(config.getAppaConfig("movementSpeed")) * -1.0D, playerDirection);
+                moveEntity(player, entity, movementSpeed * -1.0D, playerDirection);
             }
 
             if (sideways > 0.0F) { // Strafe left
                 playerLocation.setYaw(playerLocation.getYaw() - 90.0F);
 
                 playerDirection = playerLocation.getDirection();
-                moveEntity(player, entity, parseDouble(config.getAppaConfig("movementSpeed")), playerDirection);
+                moveEntity(player, entity, movementSpeed, playerDirection);
             }
 
             if (sideways < 0.0F) { // Strafe Right
                 playerLocation.setYaw(playerLocation.getYaw() + 90.0F);
 
                 playerDirection = playerLocation.getDirection();
-                moveEntity(player, entity, parseDouble(config.getAppaConfig("movementSpeed")), playerDirection);
+                moveEntity(player, entity, movementSpeed, playerDirection);
             }
 
         }
