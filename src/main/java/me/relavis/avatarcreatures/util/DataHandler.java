@@ -23,13 +23,9 @@ public class DataHandler implements Listener {
     // TODO finish data handler
     private static DataHandler instance;
     private final ExecutorService service = Executors.newCachedThreadPool();
-    AvatarCreatures plugin = AvatarCreatures.getPlugin(AvatarCreatures.class);
-    public String storageType = plugin.getConfig().getString("storage.storage-type");
-    public String host = plugin.getConfig().getString("storage.host");
-    public int port = plugin.getConfig().getInt("storage.port");
-    public String database = plugin.getConfig().getString("storage.database");
-    public String username = plugin.getConfig().getString("storage.username");
-    public String password = plugin.getConfig().getString("storage.password");
+    AvatarCreatures plugin = AvatarCreatures.getInstance();
+    ConfigHandler config = ConfigHandler.getInstance();
+    public String storageType = config.getStorage("type");
     private HikariDataSource hikari;
 
     private Connection connection;
@@ -43,11 +39,11 @@ public class DataHandler implements Listener {
 
         hikari = new HikariDataSource();
         hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        hikari.addDataSourceProperty("serverName", host);
-        hikari.addDataSourceProperty("port", port);
-        hikari.addDataSourceProperty("databaseName", database);
-        hikari.addDataSourceProperty("user", username);
-        hikari.addDataSourceProperty("password", password);
+        hikari.addDataSourceProperty("serverName", config.getStorage("host"));
+        hikari.addDataSourceProperty("port", config.getStorage("port"));
+        hikari.addDataSourceProperty("databaseName", config.getStorage("database"));
+        hikari.addDataSourceProperty("user", config.getStorage("username"));
+        hikari.addDataSourceProperty("password", config.getStorage("password"));
         try {
             synchronized (this) {
 
