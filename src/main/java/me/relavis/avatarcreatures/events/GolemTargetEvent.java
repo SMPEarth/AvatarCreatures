@@ -10,7 +10,7 @@ public class GolemTargetEvent implements Listener {
 
     @EventHandler
     public void onHostileTarget(EntityTargetEvent e) {
-        if(e.getEntity() instanceof Golem && e.getTarget() instanceof Ravager) {
+        if (e.getEntity() instanceof Golem && e.getTarget() instanceof Ravager) {
             e.setCancelled(true);
         }
     }

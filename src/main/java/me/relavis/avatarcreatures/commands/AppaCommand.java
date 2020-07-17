@@ -39,7 +39,7 @@ public class AppaCommand implements TabExecutor {
                             if (data.isAlive(playerUUID, type)) {
                                 if (newName.length() < 16) {
                                     if (newName.trim().length() > 0) {
-                                        data.setEntityName(playerUUID, type, newName);
+                                        data.setEntityName(playerUUID, type, newName, true);
                                         sender.sendMessage(ChatColor.GREEN + "Name changed successfully.");
                                     } else {
                                         sender.sendMessage(ChatColor.RED + "Names cannot be blank.");
@@ -63,7 +63,7 @@ public class AppaCommand implements TabExecutor {
                                 UUID entityUUID = data.getEntityUUID(playerUUID, type);
                                 Entity entity = data.getEntityByUniqueId(entityUUID);
                                 entity.remove();
-                                data.setAlive(entityUUID, false);
+                                data.setAlive(playerUUID, entityUUID, false);
                                 sender.sendMessage(ChatColor.GREEN + "Your Appa flies away.");
                             } else {
                                 sender.sendMessage(ChatColor.RED + "Your Appa is away! Use " + ChatColor.GOLD + "/appa call" + ChatColor.RED + " to call your Appa.");
@@ -93,8 +93,8 @@ public class AppaCommand implements TabExecutor {
                                         entity.setCustomNameVisible(true);
                                         entity.setCustomName(data.getEntityName(playerUUID, type)); // Change entity name to whatever is in DB
                                         UUID entityUUID = entity.getUniqueId(); // Get new entity UUID
-                                        data.updateEntityUUID(playerUUID, entityUUID); // Update entity UUID to new UUID
-                                        data.setAlive(entityUUID, true); // Set entity's state
+                                        data.updateEntityUUID(playerUUID, entity.getType(), entityUUID); // Update entity UUID to new UUID
+                                        data.setAlive(playerUUID, entityUUID, true); // Set entity's state
                                         sender.sendMessage(ChatColor.GREEN + "Your Appa comes to you.");
                                     });
                                 }
@@ -118,7 +118,6 @@ public class AppaCommand implements TabExecutor {
     }
 
     @Override
-
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
 
         if (args.length == 1) {

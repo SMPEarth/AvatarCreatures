@@ -1,7 +1,6 @@
 package me.relavis.avatarcreatures.events;
 
 import me.relavis.avatarcreatures.util.DataHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -23,8 +22,8 @@ public class MountEntityClickEvent implements Listener {
         UUID playerUUID = player.getUniqueId();
         Entity entity = e.getRightClicked();
         UUID entityUUID = entity.getUniqueId();
-        if(entity.getType() == EntityType.RAVAGER && entity.getPassengers().isEmpty() && e.getHand().equals(EquipmentSlot.HAND)) {
-            if(data.isOwner(playerUUID, entityUUID) || player.hasPermission("avatarcreatures.appa.ride.others")){
+        if (entity.getType() == EntityType.RAVAGER && entity.getPassengers().isEmpty() && e.getHand().equals(EquipmentSlot.HAND)) {
+            if (data.isOwner(playerUUID, entityUUID) || player.hasPermission("avatarcreatures.appa.ride.others")) {
                 if (player.hasPermission("avatarcreatures.appa.ride")) {
                     entity.addPassenger(player);
                 } else {

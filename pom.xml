@@ -6,15 +6,23 @@
 
     <groupId>me.relavis</groupId>
     <artifactId>AvatarCreatures</artifactId>
-    <version>1.1.3</version>
+    <version>1.1.4</version>
     <packaging>jar</packaging>
 
-    <name>RavagerSaddle</name>
+    <name>AvatarCreatures</name>
 
     <description>Introduces Avatar creatures to Minecraft</description>
     <properties>
+        <secretary.monitor>src</secretary.monitor>
+        <secretary.build>package -Davatarcreatures.skip-copy=true</secretary.build>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <avatarcreatures.version>${project.version}</avatarcreatures.version>
+        <avatarcreatures.release.target>${project.basedir}/target/${avatarcreatures.release.name}.jar</avatarcreatures.release.target>
+        <avatarcreatures.release>${project.basedir}/release/${project.version}</avatarcreatures.release>
+        <avatarcreatures.release.name>${project.name}-${avatarcreatures.version}</avatarcreatures.release.name>
+        <avatarcreatures.release.location>${avatarcreatures.release}/${project.name}-${avatarcreatures.version}.jar</avatarcreatures.release.location>
+        <avatarcreatures.skip-copy>true</avatarcreatures.skip-copy>
     </properties>
 
     <build>
@@ -32,12 +40,17 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
-                <!-- Do not include the <configuration>...</configuration> part if you are using Sponge! -->
                 <configuration>
+                    <finalName>${avatarcreatures.release.name}</finalName>
+                    <artifactSet>
+                        <includes>
+                            <include>org.bstats:bstats-bukkit:*</include>
+                            <include>com.zaxxer:HikariCP:*</include>
+                        </includes>
+                    </artifactSet>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <!-- Replace this with your package! -->
                             <shadedPattern>me.relavis.avatarcreatures</shadedPattern>
                         </relocation>
                     </relocations>
@@ -59,7 +72,14 @@
             </resource>
         </resources>
     </build>
-
+    <profiles>
+        <profile>
+            <id>development</id>
+            <properties>
+                <avatarcreatures.version>${project.version}-dev</avatarcreatures.version>
+            </properties>
+        </profile>
+    </profiles>
     <repositories>
         <repository>
             <id>nms-repo</id>
@@ -87,19 +107,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -129,7 +143,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>LATEST</version>
+            <version>3.4.5</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

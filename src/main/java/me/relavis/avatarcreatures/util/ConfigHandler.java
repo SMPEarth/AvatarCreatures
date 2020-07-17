@@ -1,7 +1,6 @@
 package me.relavis.avatarcreatures.util;
 
 import me.relavis.avatarcreatures.AvatarCreatures;
-import org.bukkit.entity.EntityType;
 
 public class ConfigHandler {
     //TODO create config handler
@@ -21,7 +20,7 @@ public class ConfigHandler {
 
     int version;
 
-    EntityType[] enabledMounts;
+//    List<EntityType> enabledMounts;
 
     public static ConfigHandler getInstance() {
         return instance;
@@ -45,6 +44,8 @@ public class ConfigHandler {
         password = plugin.getConfig().getString("storage.password");
 
         version = plugin.getConfig().getInt("version");
+
+//        enabledMounts.add(EntityType.RAVAGER);
     }
 
     public String getAppaConfig(String message) {
@@ -84,4 +85,8 @@ public class ConfigHandler {
     public int getVersion() {
         return version;
     }
+
+/*    public List<EntityType> getEnabledMounts() {
+        return enabledMounts;
+    }*/
 }

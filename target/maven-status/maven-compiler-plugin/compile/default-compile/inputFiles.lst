@@ -1,8 +1,8 @@
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\ConfigHandler.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\DataHandler.java
-C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\NewDataHandler.java
-C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\PlayerData.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\GolemTargetEvent.java
+C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\data\EntityData.java
+C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\util\data\PlayerData.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\listeners\MountMoveListener.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\MountEntityDamagedEvent.java
 C:\Users\Andrew\IdeaProjects\AvatarCreatures\src\main\java\me\relavis\avatarcreatures\events\PlayerDamagedEvent.java

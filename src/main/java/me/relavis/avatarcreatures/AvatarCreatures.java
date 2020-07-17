@@ -23,6 +23,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
     private static AvatarCreatures instance;
     ConfigHandler config = new ConfigHandler();
 
+
     public static AvatarCreatures getInstance() {
         return instance;
     }
@@ -41,9 +42,9 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
             getLogger().severe("Error: This plugin requires ProtocolLib. Disabling AvatarCreatures...");
         } else {
             getLogger().log(Level.INFO, "Configuration initialization successful.");
-
             DataHandler data = new DataHandler();
             data.dataSetup();
+            data.initializeOnlinePlayers();
 
             Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
@@ -51,8 +52,8 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
             Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityClickEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
-            //Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
-            //Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
 
 
             Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
@@ -78,6 +79,8 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        DataHandler data = DataHandler.getInstance();
+        data.unloadOnlinePlayers();
     }
 
 }

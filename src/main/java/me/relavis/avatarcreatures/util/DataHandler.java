@@ -2,15 +2,20 @@ package me.relavis.avatarcreatures.util;
 
 import com.zaxxer.hikari.HikariDataSource;
 import me.relavis.avatarcreatures.AvatarCreatures;
+import me.relavis.avatarcreatures.util.data.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,33 +25,33 @@ import static java.util.UUID.fromString;
 
 public class DataHandler implements Listener {
 
-    // TODO finish data handler
     private static DataHandler instance;
     private final ExecutorService service = Executors.newCachedThreadPool();
-    AvatarCreatures plugin = AvatarCreatures.getInstance();
+    private final HashMap<UUID, PlayerData> playerData = new HashMap<>();
     ConfigHandler config = ConfigHandler.getInstance();
-    public String storageType = config.getStorage("type");
+    AvatarCreatures plugin = AvatarCreatures.getInstance();
     private HikariDataSource hikari;
-
     private Connection connection;
 
     public static DataHandler getInstance() {
         return instance;
     }
 
+    // Initialize storage
     public void dataSetup() {
         instance = this;
-
-        hikari = new HikariDataSource();
-        hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        hikari.addDataSourceProperty("serverName", config.getStorage("host"));
-        hikari.addDataSourceProperty("port", config.getStorage("port"));
-        hikari.addDataSourceProperty("databaseName", config.getStorage("database"));
-        hikari.addDataSourceProperty("user", config.getStorage("username"));
-        hikari.addDataSourceProperty("password", config.getStorage("password"));
         try {
             synchronized (this) {
 
+                if (config.getStorage("type").equals("mysql")) {
+                    hikari = new HikariDataSource();
+                    hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+                    hikari.addDataSourceProperty("serverName", config.getStorage("host"));
+                    hikari.addDataSourceProperty("port", config.getStorage("port"));
+                    hikari.addDataSourceProperty("databaseName", config.getStorage("database"));
+                    hikari.addDataSourceProperty("user", config.getStorage("username"));
+                    hikari.addDataSourceProperty("password", config.getStorage("password"));
+                }
                 if (getConnection() != null && !getConnection().isClosed()) {
                     return;
                 }
@@ -54,10 +59,10 @@ public class DataHandler implements Listener {
                 setConnection();
 
                 plugin.getLogger().log(Level.INFO, "Database initialization successful.");
-                if (storageType.equals("mysql")) {
+                if (config.getStorage("type").equals("mysql")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
-                } else if (storageType.equals("flatfile")) {
-                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL)");
+                } else if (config.getStorage("type").equals("flatfile")) {
+                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INTEGER PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL)");
                 }
             }
         } catch (SQLException e) {
@@ -70,14 +75,14 @@ public class DataHandler implements Listener {
     }
 
     public void setConnection() throws SQLException {
-        if (storageType.equals("mysql")) {
+        if (config.getStorage("type").equals("mysql")) {
             try {
-                Class.forName("com.zaxxer.hikari.HikariDataSource");
+                Class.forName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
             } catch (ClassNotFoundException e) {
                 plugin.getLogger().log(Level.SEVERE, "Error setting DB connection: " + e);
             }
             connection = hikari.getConnection();
-        } else if (storageType.equals("flatfile")) {
+        } else if (config.getStorage("type").equals("flatfile")) {
             File dataFolder = new File(plugin.getDataFolder(), "storage.db");
             if (!dataFolder.exists()) {
                 try {
@@ -95,30 +100,120 @@ public class DataHandler implements Listener {
         }
     }
 
-    // Check if entity with owner and type exists
-    public boolean entityExists(UUID playerUUID, EntityType type) {
+    // Initialize player data
+    public void initializePlayerData(Player player) {
+        PlayerData playerData = new PlayerData(player.getUniqueId());
+        try {
+            if (playerHasData(player)) {
+                PreparedStatement statement = connection.prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=?");
+                statement.setString(1, player.getUniqueId().toString());
+
+                ResultSet results = statement.executeQuery();
+                while (results.next()) {
+                    int mountID = results.getInt("id");
+                    String entityName = results.getString("name");
+                    UUID entityUUID = fromString(results.getString("entityuuid"));
+                    boolean entityAlive = results.getBoolean("alive");
+                    EntityType entityType = EntityType.valueOf(results.getString("type"));
+                    Bukkit.broadcastMessage("data " + entityAlive);
+                    playerData.initializeEntity(mountID, entityType, entityName, entityUUID, entityAlive);
+                }
+                results.close();
+            }
+            this.playerData.put(player.getUniqueId(), playerData);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void initializeOnlinePlayers() {
+        Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+        if (onlinePlayers.size() != 0) {
+            Bukkit.getLogger().warning("It is not reccommended to reload AvatarCreatures plugin while players are online.");
+            Bukkit.getLogger().warning("This can result in data loss and/or duplication.");
+        }
+        for (Player player : onlinePlayers) {
+            initializePlayerData(player);
+            Bukkit.getLogger().warning("Reloaded player data for " + player.getDisplayName());
+        }
+    }
+
+    // Unload+save player data
+    public void unloadPlayerData(Player player) {
+        playerData.get(player.getUniqueId()).getEntityData().forEach((entityUUID, EntityData) -> {
+            String entityName = playerData.get(player.getUniqueId()).getEntityDisplayName(entityUUID);
+            EntityType entityType = playerData.get(player.getUniqueId()).getEntityType(entityUUID);
+            boolean entityAlive = playerData.get(player.getUniqueId()).getEntityAlive(entityUUID);
+            int mountID = playerData.get(player.getUniqueId()).getMountID(entityUUID);
+            Bukkit.broadcastMessage(entityName + " " + entityType + " " + entityAlive + " " + mountID);
+            this.service.execute(() -> {
+                if (mountID == -1) {
+                    try {
+                        PreparedStatement statement = getConnection()
+                                .prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUES (?,?,?,?,?,?)");
+                        statement.setString(1, null);
+                        statement.setString(2, entityName);
+                        statement.setString(3, player.getUniqueId().toString());
+                        statement.setString(4, entityUUID.toString());
+                        statement.setString(5, entityType.toString());
+                        statement.setBoolean(6, entityAlive);
+                        statement.executeUpdate();
+                        statement.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        PreparedStatement statement = getConnection()
+                                .prepareStatement("UPDATE avatarcreatures SET name=?, entityuuid=?, alive=? WHERE id=?");
+                        statement.setString(1, entityName);
+                        statement.setString(2, entityUUID.toString());
+                        statement.setBoolean(3, entityAlive);
+                        statement.setInt(4, mountID);
+                        statement.executeUpdate();
+                        statement.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        });
+        playerData.remove(player.getUniqueId());
+    }
+
+    public void unloadOnlinePlayers() {
+        Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+        for (Player player : onlinePlayers) {
+            unloadPlayerData(player);
+            Bukkit.getLogger().warning("Unloaded player data for " + player.getDisplayName());
+        }
+    }
+
+    public boolean playerHasData(Player player) {
         try {
             PreparedStatement statement = getConnection()
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND type=?");
-            statement.setString(1, playerUUID.toString());
-            statement.setString(2, type.toString());
-
+                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=?");
+            statement.setString(1, player.getUniqueId().toString());
             ResultSet results = statement.executeQuery();
-
             if (results.next()) {
                 results.close();
                 return true;
-            } else {
-                results.close();
-                return false;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
+    // Check if entity with owner and type exists
+    public boolean entityExists(UUID playerUUID, UUID entityUUID) {
+        return playerData.get(playerUUID).getEntityExists(entityUUID);
+    }
+
+    @Deprecated
+    public boolean entityExists(UUID playerUUID, EntityType entityType) {
+        return playerData.get(playerUUID).getEntityExists(entityType);
+    }
 
     public Entity getEntityByUniqueId(UUID entityUUID) {
         for (World world : Bukkit.getWorlds()) {
@@ -132,127 +227,69 @@ public class DataHandler implements Listener {
     }
 
     // Get entity UUID
-    public UUID getEntityUUID(UUID playerUUID, EntityType type) {
-        try {
-            PreparedStatement statement = getConnection()
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid = ? AND type = ?");
-            statement.setString(1, playerUUID.toString());
-            statement.setString(2, type.toString());
-            ResultSet results = statement.executeQuery();
-            results.next();
-            String entityUUID = results.getString("entityuuid");
-            results.close();
-            return fromString(entityUUID);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @Deprecated
+    public UUID getEntityUUID(UUID playerUUID, EntityType entityType) {
+        return playerData.get(playerUUID).getEntityUUID(entityType);
     }
 
     // Get player UUID
     public UUID getEntityOwnerUUID(UUID entityUUID) {
-        try {
-            PreparedStatement statement = getConnection()
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
-            statement.setString(1, entityUUID.toString());
-            ResultSet results = statement.executeQuery();
-            results.next();
-            String playerUUID = results.getString("playeruuid");
-            results.close();
-            return fromString(playerUUID);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Map.Entry<UUID, PlayerData> pair : playerData.entrySet()) {
+            if (playerData.get(pair.getKey()).getEntityExists(entityUUID)) {
+                return pair.getKey();
+            }
         }
         return null;
     }
 
     public Boolean isOwned(UUID entityUUID) {
-        try {
-            PreparedStatement statement = getConnection()
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
-            statement.setString(1, entityUUID.toString());
-            ResultSet results = statement.executeQuery();
-            if (results.next()) {
-                results.close();
+        for (Map.Entry<UUID, PlayerData> pair : playerData.entrySet()) {
+            if (playerData.get(pair.getKey()).getEntityExists(entityUUID)) {
                 return true;
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return false;
     }
 
     // Get entity name
-    public String getEntityName(UUID playerUUID, EntityType type) {
-        try {
-            PreparedStatement statement = connection
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid = ? AND type = ?");
-            statement.setString(1, playerUUID.toString());
-            statement.setString(2, type.toString());
-            ResultSet results = statement.executeQuery();
-            results.next();
-            String name = results.getString("name");
-            statement.close();
-            return name;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public String getEntityName(UUID playerUUID, UUID entityUUID) {
+        return playerData.get(playerUUID).getEntityDisplayName(entityUUID);
+    }
+
+    @Deprecated
+    public String getEntityName(UUID playerUUID, EntityType entityType) {
+        return playerData.get(playerUUID).getEntityDisplayName(entityType);
     }
 
     // Set entity name if it exists
-    public void setEntityName(UUID playerUUID, EntityType type, String newName) {
-        this.service.execute(() -> {
-            try {
-                PreparedStatement statement = getConnection()
-                        .prepareStatement("UPDATE avatarcreatures SET name=? WHERE playeruuid=? AND type=?");
-                statement.setString(1, newName);
-                statement.setString(2, playerUUID.toString());
-                statement.setString(3, type.toString());
-                statement.executeUpdate();
-                statement.close();
-                UUID entityUUID = getEntityUUID(playerUUID, type);
-                Entity entity = getEntityByUniqueId(entityUUID);
-                entity.setCustomName(newName);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+    public void setEntityName(UUID playerUUID, UUID entityUUID, String newName, boolean rename) {
+        playerData.get(playerUUID).setEntityDisplayName(entityUUID, newName, rename);
     }
 
+    @Deprecated
+    public void setEntityName(UUID playerUUID, EntityType entityType, String newName, boolean rename) {
+        playerData.get(playerUUID).setEntityDisplayName(entityType, newName, rename);
+    }
+
+    @Deprecated
     // Create entity
-    public void addEntityToData(String playerName, UUID playerUUID, UUID entityUUID, EntityType type) {
-        this.service.execute(() -> {
-            try {
-                PreparedStatement insert = null;
-                if (storageType.equals("mysql")) {
-                    insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUE (?,?,?,?,?,?)");
-                } else if (storageType.equals("flatfile")) {
-                    insert = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUES (?,?,?,?,?,?)");
-                }
-                assert insert != null;
-                insert.setString(1, null);
-                insert.setString(2, playerName + "'s Appa");
-                insert.setString(3, playerUUID.toString());
-                insert.setString(4, entityUUID.toString());
-                insert.setString(5, type.toString());
-                insert.setBoolean(6, true);
-                insert.executeUpdate();
-                insert.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        });
+    public void addEntityToData(String playerName, UUID playerUUID, UUID entityUUID, EntityType entityType) {
+        playerData.get(playerUUID).initializeEntity(-1, entityType, playerName + "'s Appa", entityUUID, true);
+    }
+
+    public void addEntityToData(UUID playerUUID, int mountID, EntityType entityType, String entityName, UUID entityUUID, boolean entityAlive) {
+        playerData.get(playerUUID).initializeEntity(mountID, entityType, entityName, entityUUID, entityAlive);
     }
 
     public void removeEntityFromData(UUID entityUUID) {
+        UUID playerUUID = getEntityOwnerUUID(entityUUID);
+        playerData.get(playerUUID).deleteEntity(entityUUID);
+
         this.service.execute(() -> {
             try {
                 PreparedStatement statement = getConnection()
                         .prepareStatement("DELETE FROM avatarcreatures WHERE entityuuid=?");
-                statement.setString(1, entityUUID.toString());
-
+                statement.setString(1, String.valueOf(entityUUID));
                 statement.executeUpdate();
                 statement.close();
             } catch (SQLException e) {
@@ -262,65 +299,28 @@ public class DataHandler implements Listener {
     }
 
     // After a player has had their entity respawned, update to its new UUID
-    public void updateEntityUUID(UUID playerUUID, UUID newUUID) {
-        try {
-            PreparedStatement statement = getConnection()
-                    .prepareStatement("UPDATE avatarcreatures SET entityuuid=? WHERE playeruuid=?");
-            statement.setString(1, newUUID.toString());
-            statement.setString(2, playerUUID.toString());
+    public void updateEntityUUID(UUID playerUUID, UUID entityUUID, UUID newEntityUUID) {
+        playerData.get(playerUUID).setEntityUUID(entityUUID, newEntityUUID);
+    }
 
-            statement.executeUpdate();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    @Deprecated
+    public void updateEntityUUID(UUID playerUUID, EntityType entityType, UUID newEntityUUID) {
+        playerData.get(playerUUID).setEntityUUID(entityType, newEntityUUID);
     }
 
     // Check if player is the owner of entity
     public boolean isOwner(UUID playerUUID, UUID entityUUID) {
-        try {
-            PreparedStatement statement = getConnection()
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND entityuuid=?");
-            statement.setString(1, playerUUID.toString());
-            statement.setString(2, entityUUID.toString());
-            ResultSet results = statement.executeQuery();
-            if (results.next()) {
-                results.close();
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return playerData.get(playerUUID).ownsEntity(entityUUID);
     }
 
     // Check if entity of certain player and type is alive
-    public boolean isAlive(UUID playerUUID, EntityType type) {
-        try {
-            PreparedStatement statement = getConnection()
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=? AND type=? AND alive=?");
-            statement.setString(1, playerUUID.toString());
-            statement.setString(2, String.valueOf(type));
-            statement.setString(3, "1");
+    public boolean isAlive(UUID playerUUID, UUID entityUUID) {
+        return playerData.get(playerUUID).getEntityAlive(entityUUID);
+    }
 
-
-            ResultSet results = statement.executeQuery();
-
-
-            if (results.next()) {
-                UUID entityUUID = fromString(results.getString("entityuuid"));
-                statement.close();
-                if (isAliveFromUUID(entityUUID)) {
-                    return true;
-                }
-            } else {
-                statement.close();
-                return false;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    @Deprecated
+    public boolean isAlive(UUID playerUUID, EntityType entityType) {
+        return playerData.get(playerUUID).getEntityAlive(entityType);
     }
 
     public boolean isAliveFromUUID(UUID entityUUID) {
@@ -333,20 +333,10 @@ public class DataHandler implements Listener {
         return false;
     }
 
-    // Set entity's state to alive
-    public void setAlive(UUID entityUUID, Boolean alive) {
-        this.service.execute(() -> {
-            try {
-                PreparedStatement statement = getConnection()
-                        .prepareStatement("UPDATE avatarcreatures SET alive=? WHERE entityuuid=?");
-                statement.setBoolean(1, alive);
-                statement.setString(2, entityUUID.toString());
-                statement.executeUpdate();
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+    // Set entity's alive state
+    public void setAlive(UUID playerUUID, UUID entityUUID, Boolean entityAlive) {
+        Bukkit.broadcastMessage("Setting alive to " + entityAlive + " in DataHandler.java");
+        playerData.get(playerUUID).setEntityAlive(entityUUID, entityAlive);
     }
 
     public void asyncUpdate(String query) {
@@ -360,7 +350,4 @@ public class DataHandler implements Listener {
             }
         });
     }
-
-
 }
-

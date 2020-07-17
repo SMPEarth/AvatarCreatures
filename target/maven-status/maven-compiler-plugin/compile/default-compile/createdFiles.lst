@@ -6,14 +6,13 @@ me\relavis\avatarcreatures\events\MountEntityClickEvent.class
 me\relavis\avatarcreatures\events\PlayerJoinEvent.class
 me\relavis\avatarcreatures\util\ConfigHandler.class
 me\relavis\avatarcreatures\events\PlayerDamagedEvent.class
+me\relavis\avatarcreatures\util\data\PlayerData.class
 me\relavis\avatarcreatures\util\DataHandler.class
+me\relavis\avatarcreatures\util\data\EntityData.class
 me\relavis\avatarcreatures\events\PlayerQuitEvent.class
 me\relavis\avatarcreatures\events\MountEntityDeathEvent.class
 me\relavis\avatarcreatures\AvatarCreatures.class
 me\relavis\avatarcreatures\AvatarCreatures$2.class
 me\relavis\avatarcreatures\events\GolemTargetEvent.class
-me\relavis\avatarcreatures\util\NewDataHandler.class
-me\relavis\avatarcreatures\util\PlayerData$1.class
 me\relavis\avatarcreatures\events\MountEntityHostileTargetEvent.class
-me\relavis\avatarcreatures\util\PlayerData.class
 me\relavis\avatarcreatures\AvatarCreatures$1.class

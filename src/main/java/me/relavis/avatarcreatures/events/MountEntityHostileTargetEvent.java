@@ -9,7 +9,7 @@ public class MountEntityHostileTargetEvent implements Listener {
 
     @EventHandler
     public void onHostileTarget(EntityTargetEvent e) {
-        if(e.getEntity() instanceof Ravager) {
+        if (e.getEntity() instanceof Ravager) {
             e.setCancelled(true);
         }
     }

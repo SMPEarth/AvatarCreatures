@@ -5,9 +5,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.util.ConfigHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
@@ -15,8 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
-
-import static java.lang.Double.parseDouble;
 
 public class MountMoveListener implements Listener {
 
@@ -107,9 +104,9 @@ public class MountMoveListener implements Listener {
         float playerEyeYaw = playerEye.getYaw();
         float playerEyePitch = playerEye.getPitch();
 
-        double xAdd = vector.getX() + speed;
+        double xAdd = vector.getX();
         double yAdd = vector.getY();
-        double zAdd = vector.getZ() + speed;
+        double zAdd = vector.getZ();
         ((CraftEntity) entity).getHandle().setMot(xAdd, yAdd, zAdd);
         updateClientView(entity, player, playerEyeYaw, playerEyePitch);
     }
@@ -139,7 +136,6 @@ public class MountMoveListener implements Listener {
         enforceRotation2.getBytes().writeSafely(0, (byte) (playerEyeYaw * 256F / 360F));
         enforceRotation2.getBytes().writeSafely(1, (byte) (playerEyePitch * 256F / 360F));
         try {
-            Bukkit.broadcastMessage("Yaw " + playerEyeYaw * 256F / 360F + " pitch " + playerEyePitch * 256F / 360F);
             ProtocolLibrary.getProtocolManager()
                     .sendServerPacket(player, enforceRotation1);
             ProtocolLibrary.getProtocolManager()

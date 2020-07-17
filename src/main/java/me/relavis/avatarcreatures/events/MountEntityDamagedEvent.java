@@ -1,6 +1,5 @@
 package me.relavis.avatarcreatures.events;
 
-import me.relavis.avatarcreatures.AvatarCreatures;
 import me.relavis.avatarcreatures.util.ConfigHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
