@@ -37,9 +37,6 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         if (config.getVersion() != 1) {
             getLogger().severe("Error: Your config is outdated or corrupted. Please delete your config and restart the server. Disabling AvatarCreatures...");
             Bukkit.getPluginManager().disablePlugin(this);
-        } else if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-            Bukkit.getPluginManager().disablePlugin(this);
-            getLogger().severe("Error: This plugin requires ProtocolLib. Disabling AvatarCreatures...");
         } else {
             getLogger().log(Level.INFO, "Configuration initialization successful.");
             DataHandler data = new DataHandler();
