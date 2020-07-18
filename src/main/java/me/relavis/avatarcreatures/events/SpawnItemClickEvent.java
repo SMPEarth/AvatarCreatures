@@ -60,7 +60,6 @@ public class SpawnItemClickEvent implements Listener {
                     entity.setCustomName(playerName + "'s Appa");
                     player.getInventory().setItemInMainHand(null);
                     UUID entityUUID = entity.getUniqueId();
-                    //data.addEntityToData(playerName, playerUUID, entityUUID, type);
                     data.addEntityToData(playerUUID, -1, type, playerName + "'s Appa", entityUUID, true);
 
                 });

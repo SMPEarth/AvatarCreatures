@@ -58,6 +58,6 @@ public class EntityData {
 
     public void setEntityAlive(boolean entityAlive) {
         this.entityAlive = entityAlive;
-        Bukkit.broadcastMessage("Setting alive to " + entityAlive + " in EntityData.java");
+        Bukkit.getLogger().info("Setting alive to " + entityAlive + " in EntityData.java");
     }
 }

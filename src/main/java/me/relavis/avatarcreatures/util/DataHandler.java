@@ -115,7 +115,7 @@ public class DataHandler implements Listener {
                     UUID entityUUID = fromString(results.getString("entityuuid"));
                     boolean entityAlive = results.getBoolean("alive");
                     EntityType entityType = EntityType.valueOf(results.getString("type"));
-                    Bukkit.broadcastMessage("data " + entityAlive);
+                    Bukkit.getLogger().info("data " + entityAlive);
                     playerData.initializeEntity(mountID, entityType, entityName, entityUUID, entityAlive);
                 }
                 results.close();
@@ -145,7 +145,7 @@ public class DataHandler implements Listener {
             EntityType entityType = playerData.get(player.getUniqueId()).getEntityType(entityUUID);
             boolean entityAlive = playerData.get(player.getUniqueId()).getEntityAlive(entityUUID);
             int mountID = playerData.get(player.getUniqueId()).getMountID(entityUUID);
-            Bukkit.broadcastMessage(entityName + " " + entityType + " " + entityAlive + " " + mountID);
+            Bukkit.getLogger().info(entityName + " " + entityType + " " + entityAlive + " " + mountID);
             this.service.execute(() -> {
                 if (mountID == -1) {
                     try {
@@ -335,7 +335,7 @@ public class DataHandler implements Listener {
 
     // Set entity's alive state
     public void setAlive(UUID playerUUID, UUID entityUUID, Boolean entityAlive) {
-        Bukkit.broadcastMessage("Setting alive to " + entityAlive + " in DataHandler.java");
+        Bukkit.getLogger().info("Setting alive to " + entityAlive + " in DataHandler.java");
         playerData.get(playerUUID).setEntityAlive(entityUUID, entityAlive);
     }
 
