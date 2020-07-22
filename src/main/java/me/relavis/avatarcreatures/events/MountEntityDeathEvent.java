@@ -17,14 +17,15 @@ public class MountEntityDeathEvent implements Listener {
     @EventHandler
     public void onMountEntityDeath(EntityDeathEvent e) {
         UUID entityUUID = e.getEntity().getUniqueId();
-        if (data.isOwned(entityUUID)) {
+        if (data.entityHasData(entityUUID)) {
             UUID playerUUID = data.getEntityOwnerUUID(entityUUID);
             Player player = Bukkit.getPlayer(playerUUID);
-
-            data.removeEntityFromData(entityUUID);
             e.getDrops().clear();
-            if (player.isOnline()) {
+            if (player != null && player.isOnline()) {
+                data.removeEntityFromData(entityUUID, true);
                 player.sendMessage(ChatColor.BLUE + "Your Appa has died.");
+            } else {
+                data.setEntityKilled(entityUUID);
             }
         }
     }

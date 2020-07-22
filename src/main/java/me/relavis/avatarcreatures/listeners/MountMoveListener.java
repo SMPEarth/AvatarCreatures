@@ -56,7 +56,7 @@ public class MountMoveListener implements Listener {
             if (forward < 0.0F) { // Backwards
                 if (sideways > 0.0F) { // Move backwards and to the left
                     playerLocation.setYaw(playerLocation.getYaw() - 45.0F);
-                }
+                } // TODO fix moving backwards
 
                 if (sideways < 0.0F) { // Move backwards and to the right
                     playerLocation.setYaw(playerLocation.getYaw() + 45.0F);

@@ -47,7 +47,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
             Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new MountEntityClickEvent(), this);
+            Bukkit.getPluginManager().registerEvents(new MountEntityMountEvent(), this);
             Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);

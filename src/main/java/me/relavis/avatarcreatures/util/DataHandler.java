@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.relavis.avatarcreatures.AvatarCreatures;
 import me.relavis.avatarcreatures.util.data.PlayerData;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -60,9 +61,9 @@ public class DataHandler implements Listener {
 
                 plugin.getLogger().log(Level.INFO, "Database initialization successful.");
                 if (config.getStorage("type").equals("mysql")) {
-                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
+                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
                 } else if (config.getStorage("type").equals("flatfile")) {
-                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INTEGER PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL)");
+                    asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INTEGER PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL)");
                 }
             }
         } catch (SQLException e) {
@@ -115,8 +116,13 @@ public class DataHandler implements Listener {
                     UUID entityUUID = fromString(results.getString("entityuuid"));
                     boolean entityAlive = results.getBoolean("alive");
                     EntityType entityType = EntityType.valueOf(results.getString("type"));
-                    Bukkit.getLogger().info("data " + entityAlive);
+                    boolean entityKilled = results.getBoolean("killed");
                     playerData.initializeEntity(mountID, entityType, entityName, entityUUID, entityAlive);
+
+                    if(entityKilled) {
+                        removeEntityFromData(entityUUID, false);
+                        player.sendMessage(ChatColor.BLUE + "Your Appa has died while you were offline.");
+                    }
                 }
                 results.close();
             }
@@ -134,7 +140,6 @@ public class DataHandler implements Listener {
         }
         for (Player player : onlinePlayers) {
             initializePlayerData(player);
-            Bukkit.getLogger().warning("Reloaded player data for " + player.getDisplayName());
         }
     }
 
@@ -145,18 +150,18 @@ public class DataHandler implements Listener {
             EntityType entityType = playerData.get(player.getUniqueId()).getEntityType(entityUUID);
             boolean entityAlive = playerData.get(player.getUniqueId()).getEntityAlive(entityUUID);
             int mountID = playerData.get(player.getUniqueId()).getMountID(entityUUID);
-            Bukkit.getLogger().info(entityName + " " + entityType + " " + entityAlive + " " + mountID);
             this.service.execute(() -> {
                 if (mountID == -1) {
                     try {
                         PreparedStatement statement = getConnection()
-                                .prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive) VALUES (?,?,?,?,?,?)");
+                                .prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive,killed) VALUES (?,?,?,?,?,?,?)");
                         statement.setString(1, null);
                         statement.setString(2, entityName);
                         statement.setString(3, player.getUniqueId().toString());
                         statement.setString(4, entityUUID.toString());
                         statement.setString(5, entityType.toString());
                         statement.setBoolean(6, entityAlive);
+                        statement.setBoolean(7, false);
                         statement.executeUpdate();
                         statement.close();
                     } catch (SQLException e) {
@@ -185,7 +190,6 @@ public class DataHandler implements Listener {
         Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
         for (Player player : onlinePlayers) {
             unloadPlayerData(player);
-            Bukkit.getLogger().warning("Unloaded player data for " + player.getDisplayName());
         }
     }
 
@@ -242,7 +246,27 @@ public class DataHandler implements Listener {
         return null;
     }
 
-    public Boolean isOwned(UUID entityUUID) {
+    public boolean entityHasData(UUID entityUUID) {
+        if(isInitialized(entityUUID)) {
+            return true;
+        } else {
+            try {
+                PreparedStatement statement = getConnection()
+                        .prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
+                statement.setString(1, entityUUID.toString());
+                ResultSet results = statement.executeQuery();
+                if (results.next()) {
+                    results.close();
+                    return true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+    }
+
+    public boolean isInitialized(UUID entityUUID) {
         for (Map.Entry<UUID, PlayerData> pair : playerData.entrySet()) {
             if (playerData.get(pair.getKey()).getEntityExists(entityUUID)) {
                 return true;
@@ -281,15 +305,31 @@ public class DataHandler implements Listener {
         playerData.get(playerUUID).initializeEntity(mountID, entityType, entityName, entityUUID, entityAlive);
     }
 
-    public void removeEntityFromData(UUID entityUUID) {
+    public void removeEntityFromData(UUID entityUUID, boolean removeFromPlayerData) {
         UUID playerUUID = getEntityOwnerUUID(entityUUID);
-        playerData.get(playerUUID).deleteEntity(entityUUID);
+        if (removeFromPlayerData) playerData.get(playerUUID).deleteEntity(entityUUID);
 
         this.service.execute(() -> {
             try {
                 PreparedStatement statement = getConnection()
                         .prepareStatement("DELETE FROM avatarcreatures WHERE entityuuid=?");
                 statement.setString(1, String.valueOf(entityUUID));
+                statement.executeUpdate();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void setEntityKilled(UUID entityUUID) {
+        this.service.execute(() -> {
+            try {
+                PreparedStatement statement = getConnection()
+                        .prepareStatement("UPDATE avatarcreatures SET alive=?, killed=? WHERE entityuuid=?");
+                statement.setBoolean(1, false);
+                statement.setBoolean(2, true);
+                statement.setString(3, entityUUID.toString());
                 statement.executeUpdate();
                 statement.close();
             } catch (SQLException e) {
@@ -335,7 +375,6 @@ public class DataHandler implements Listener {
 
     // Set entity's alive state
     public void setAlive(UUID playerUUID, UUID entityUUID, Boolean entityAlive) {
-        Bukkit.getLogger().info("Setting alive to " + entityAlive + " in DataHandler.java");
         playerData.get(playerUUID).setEntityAlive(entityUUID, entityAlive);
     }
 

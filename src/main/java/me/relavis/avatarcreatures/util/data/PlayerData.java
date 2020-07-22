@@ -68,7 +68,6 @@ public class PlayerData {
     @Deprecated
     public boolean getEntityExists(EntityType entityType) {
         for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
-            Bukkit.getLogger().info(pair.toString());
             if (entityData.get(pair.getKey()).getEntityType() == entityType) {
                 return true;
             }
@@ -116,7 +115,6 @@ public class PlayerData {
 
     public void setEntityAlive(UUID entityUUID, boolean entityAlive) {
         entityData.get(entityUUID).setEntityAlive(entityAlive);
-        Bukkit.getLogger().info("Setting alive to " + entityAlive + " in PlayerData.java");
     }
 
     public int getMountID(UUID entityUUID) {
@@ -140,11 +138,5 @@ public class PlayerData {
         data.setEntityAlive(entityAlive);
         data.setEntityAlive(entityAlive);
         entityData.put(entityUUID, data);
-
-        Bukkit.getLogger().info(String.valueOf(mountID));
-        Bukkit.getLogger().info(String.valueOf(entityType));
-        Bukkit.getLogger().info(String.valueOf(entityName));
-        Bukkit.getLogger().info(String.valueOf(entityUUID));
-        Bukkit.getLogger().info(String.valueOf(entityAlive));
     }
 }
