@@ -12,7 +12,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.UUID;
 
-public class MountEntityClickEvent implements Listener {
+public class MountEntityMountEvent implements Listener {
 
     DataHandler data = DataHandler.getInstance();
 

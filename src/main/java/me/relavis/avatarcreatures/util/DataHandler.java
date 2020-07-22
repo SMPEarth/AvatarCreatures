@@ -137,6 +137,7 @@ public class DataHandler implements Listener {
         if (onlinePlayers.size() != 0) {
             Bukkit.getLogger().warning("It is not reccommended to reload AvatarCreatures plugin while players are online.");
             Bukkit.getLogger().warning("This can result in data loss and/or duplication.");
+            Bukkit.getLogger().warning("Reloading player data for " + onlinePlayers.size() + " players");
         }
         for (Player player : onlinePlayers) {
             initializePlayerData(player);
