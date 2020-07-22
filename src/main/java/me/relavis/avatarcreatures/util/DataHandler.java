@@ -388,7 +388,7 @@ public class DataHandler implements Listener {
                 statement.executeUpdate();
                 statement.close();
             } catch (Exception e) {
-                if (!e.getMessage().equals("Duplicate column name 'killed'")) {
+                if (!e.getMessage().equals("Duplicate column name 'killed'") && !e.getMessage().equals("[SQLITE_ERROR] SQL error or missing database (duplicate column name: killed)")) {
                     e.printStackTrace();
                 }
             }
