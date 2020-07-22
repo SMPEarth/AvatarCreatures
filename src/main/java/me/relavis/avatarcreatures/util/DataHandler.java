@@ -62,8 +62,10 @@ public class DataHandler implements Listener {
                 plugin.getLogger().log(Level.INFO, "Database initialization successful.");
                 if (config.getStorage("type").equals("mysql")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
+                    asyncUpdate("ALTER TABLE avatarcreatures ADD killed boolean NOT NULL DEFAULT '0';");
                 } else if (config.getStorage("type").equals("flatfile")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INTEGER PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL)");
+                    asyncUpdate("ALTER TABLE avatarcreatures ADD killed boolean NOT NULL DEFAULT '0';");
                 }
             }
         } catch (SQLException e) {
@@ -386,7 +388,9 @@ public class DataHandler implements Listener {
                 statement.executeUpdate();
                 statement.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                if (!e.getMessage().equals("Duplicate column name 'killed'")) {
+                    e.printStackTrace();
+                }
             }
         });
     }
