@@ -62,15 +62,15 @@ public class DataHandler implements Listener {
                 plugin.getLogger().log(Level.INFO, "Database initialization successful.");
                 if (config.getStorage("type").equals("mysql")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
-                    asyncUpdate("ALTER TABLE avatarcreatures ADD killed boolean NOT NULL DEFAULT '0';");
                 } else if (config.getStorage("type").equals("flatfile")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INTEGER PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL)");
-                    asyncUpdate("ALTER TABLE avatarcreatures ADD killed boolean NOT NULL DEFAULT '0';");
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        initializeOnlinePlayers();
     }
 
     public Connection getConnection() {
@@ -121,7 +121,7 @@ public class DataHandler implements Listener {
                     boolean entityKilled = results.getBoolean("killed");
                     playerData.initializeEntity(mountID, entityType, entityName, entityUUID, entityAlive);
 
-                    if(entityKilled) {
+                    if (entityKilled) {
                         removeEntityFromData(entityUUID, false);
                         player.sendMessage(ChatColor.BLUE + "Your Appa has died while you were offline.");
                     }
@@ -137,7 +137,7 @@ public class DataHandler implements Listener {
     public void initializeOnlinePlayers() {
         Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
         if (onlinePlayers.size() != 0) {
-            Bukkit.getLogger().warning("It is not reccommended to reload AvatarCreatures plugin while players are online.");
+            Bukkit.getLogger().warning("It is not reccommended to reload AvatarCreatures while players are online.");
             Bukkit.getLogger().warning("This can result in data loss and/or duplication.");
             Bukkit.getLogger().warning("Reloading player data for " + onlinePlayers.size() + " players");
         }
@@ -250,7 +250,7 @@ public class DataHandler implements Listener {
     }
 
     public boolean entityHasData(UUID entityUUID) {
-        if(isInitialized(entityUUID)) {
+        if (isInitialized(entityUUID)) {
             return true;
         } else {
             try {
@@ -388,9 +388,7 @@ public class DataHandler implements Listener {
                 statement.executeUpdate();
                 statement.close();
             } catch (Exception e) {
-                if (!e.getMessage().equals("Duplicate column name 'killed'") && !e.getMessage().equals("[SQLITE_ERROR] SQL error or missing database (duplicate column name: killed)")) {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
         });
     }

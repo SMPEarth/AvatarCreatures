@@ -9,6 +9,10 @@ appa:
   # Should the player be automatically unmounted from the Appa if it/the player is hurt?
   unmount-when-appa-damaged: true
   unmount-when-player-damaged: true
+  # Should the Appa despawn after the player unmounts?
+  despawn-after-unmount: true
+  # How long after unmounting should the Appa despawn? Time is in ticks (20 ticks = 1 second)
+  despawn-time: 200
 
 # AvatarCreatures can currently run through either a flat file using SQLite or a MySQL server.
 
@@ -25,5 +29,5 @@ storage:
 
 
 
-# DO NOT CHANGE THIS VALUE! This is used for internal purposes. Changing this will result in the plugin failing to load.
-version: 1
+# DO NOT CHANGE THIS VALUE! This is used for internal purposes. Changing this may result in errors.
+version: 2

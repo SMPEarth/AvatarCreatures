@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
-import java.util.logging.Level;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
@@ -34,43 +33,38 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         instance = this;
 
         config.configSetup();
-        if (config.getVersion() != 1) {
-            getLogger().severe("Error: Your config is outdated or corrupted. Please delete your config and restart the server. Disabling AvatarCreatures...");
-            Bukkit.getPluginManager().disablePlugin(this);
-        } else {
-            getLogger().log(Level.INFO, "Configuration initialization successful.");
-            DataHandler data = new DataHandler();
-            data.dataSetup();
-            data.initializeOnlinePlayers();
 
-            Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new MountEntityMountEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
-            Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
+        DataHandler data = new DataHandler();
+        data.dataSetup();
+
+        Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityMountEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityUnmountEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
 
 
-            Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
+        Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
 
-            ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
-                    ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
-                public void onPacketReceiving(PacketEvent event) {
-                    MountMoveListener.onMountEntitySteer(event);
-                }
-            });
-            ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
-                    ListenerPriority.HIGHEST, PacketType.Play.Client.VEHICLE_MOVE) {
-                public void onPacketReceiving(PacketEvent event) {
-                    MountMoveListener.onMountEntityMove(event);
-                }
-            });
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
+                ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
+            public void onPacketReceiving(PacketEvent event) {
+                MountMoveListener.onMountEntitySteer(event);
+            }
+        });
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
+                ListenerPriority.HIGHEST, PacketType.Play.Client.VEHICLE_MOVE) {
+            public void onPacketReceiving(PacketEvent event) {
+                MountMoveListener.onMountEntityMove(event);
+            }
+        });
 
-            int pluginId = 7715;
-            Metrics metrics = new Metrics(this, pluginId);
-        }
+        int pluginId = 7715;
+        Metrics metrics = new Metrics(this, pluginId);
     }
 
     @Override
