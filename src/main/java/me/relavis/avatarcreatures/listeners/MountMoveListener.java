@@ -6,7 +6,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.util.ConfigHandler;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
