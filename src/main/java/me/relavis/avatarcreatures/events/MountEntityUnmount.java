@@ -12,7 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-public class MountEntityUnmountEvent implements Listener {
+public class MountEntityUnmount implements Listener {
 
     ConfigHandler config = ConfigHandler.getInstance();
     DataHandler data = DataHandler.getInstance();

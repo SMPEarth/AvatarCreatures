@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-public class PlayerDamagedEvent implements Listener {
+public class PlayerDamaged implements Listener {
     ConfigHandler config = ConfigHandler.getInstance();
 
     @EventHandler

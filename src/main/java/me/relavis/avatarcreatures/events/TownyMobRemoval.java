@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-public class TownyMobRemovalEvent implements Listener {
+public class TownyMobRemoval implements Listener {
 
     DataHandler data = DataHandler.getInstance();
 

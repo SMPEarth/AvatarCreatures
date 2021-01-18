@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import java.util.UUID;
 
-public class MountEntityDeathEvent implements Listener {
+public class MountEntityDeath implements Listener {
 
     DataHandler data = DataHandler.getInstance();
 

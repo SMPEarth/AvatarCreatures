@@ -37,16 +37,16 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         DataHandler data = new DataHandler();
         data.dataSetup();
 
-        Bukkit.getPluginManager().registerEvents(new MountEntityDamagedEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityDeathEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityHostileTargetEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityMountEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new MountEntityUnmountEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerDamagedEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerQuitEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new SpawnItemClickEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new TownyMobRemovalEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityDamaged(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityDeath(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityHostileTarget(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityMount(), this);
+        Bukkit.getPluginManager().registerEvents(new MountEntityUnmount(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDamaged(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerQuit(), this);
+        Bukkit.getPluginManager().registerEvents(new SpawnItemClick(), this);
+        Bukkit.getPluginManager().registerEvents(new TownyMobRemoval(), this);
 
         Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
 

@@ -4,7 +4,7 @@ import me.relavis.avatarcreatures.util.DataHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class PlayerQuitEvent implements Listener {
+public class PlayerQuit implements Listener {
     DataHandler data = DataHandler.getInstance();
 
     @EventHandler

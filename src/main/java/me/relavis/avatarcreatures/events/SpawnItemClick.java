@@ -17,7 +17,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.Objects;
 import java.util.UUID;
 
-public class SpawnItemClickEvent implements Listener {
+public class SpawnItemClick implements Listener {
 
     DataHandler data = DataHandler.getInstance();
     ConfigHandler config = ConfigHandler.getInstance();
