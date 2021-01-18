@@ -57,8 +57,8 @@ processResources {
     }
 }
 
-String finalJarName = project.name + "-" + project.version;
-String finalJarPath = jar.archiveFile.get().getAsFile().getParentFile().getParentFile().getParentFile().getAbsolutePath() + "\\release\\" + project.version + "\\" + finalJarName + ".jar";
+String finalJarName = project.name + "-" + project.version
+String finalJarPath = jar.archiveFile.get().getAsFile().getParentFile().getParentFile().getParentFile().getAbsolutePath() + "\\release\\" + project.version + "\\" + finalJarName + ".jar"
 
 shadowJar {
     dependencies {
@@ -83,7 +83,7 @@ shadowJar {
 task buildRelease {
     group 'AvatarCreatures'
     dependsOn 'shadowJar'
-    file(jar.archiveFile.get().getAsFile().getParentFile().getParentFile().getParentFile().getParentFile().getAbsolutePath() + '/build/resources/main/plugin.yml').delete();
+    file(jar.archiveFile.get().getAsFile().getParentFile().getParentFile().getParentFile().getParentFile().getAbsolutePath() + '/build/resources/main/plugin.yml').delete()
 }
 
 tasks.withType(JavaCompile) {
