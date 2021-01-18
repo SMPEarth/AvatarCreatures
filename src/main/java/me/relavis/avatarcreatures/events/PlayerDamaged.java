@@ -16,7 +16,7 @@ public class PlayerDamaged implements Listener {
             Player p = (Player) e.getEntity();
 
             if (p.isInsideVehicle()) {
-                if (p.getVehicle() instanceof Ravager && Boolean.parseBoolean(config.getAppaConfig("unmountWhenPlayerDamaged"))) {
+                if (p.getVehicle() instanceof Ravager && config.getAppaUnmountWhenPlayerDamaged()) {
                     p.leaveVehicle();
                 }
 

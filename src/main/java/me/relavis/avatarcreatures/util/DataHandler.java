@@ -35,6 +35,7 @@ public class DataHandler implements Listener {
     ConfigHandler config = ConfigHandler.getInstance();
     AvatarCreatures plugin = AvatarCreatures.getInstance();
     private HikariDataSource hikari;
+    @Getter
     private Connection connection;
 
     // Initialize storage
@@ -43,14 +44,14 @@ public class DataHandler implements Listener {
         try {
             synchronized (this) {
 
-                if (config.getStorage("type").equals("mysql")) {
+                if (config.getStorageType().equals("mysql")) {
                     hikari = new HikariDataSource();
                     hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-                    hikari.addDataSourceProperty("serverName", config.getStorage("host"));
-                    hikari.addDataSourceProperty("port", config.getStorage("port"));
-                    hikari.addDataSourceProperty("databaseName", config.getStorage("database"));
-                    hikari.addDataSourceProperty("user", config.getStorage("username"));
-                    hikari.addDataSourceProperty("password", config.getStorage("password"));
+                    hikari.addDataSourceProperty("serverName", config.getDatabaseHost());
+                    hikari.addDataSourceProperty("port", config.getDatabasePort());
+                    hikari.addDataSourceProperty("databaseName", config.getDatabaseName());
+                    hikari.addDataSourceProperty("user", config.getDatabaseUsername());
+                    hikari.addDataSourceProperty("password", config.getDatabasePassword());
                 }
                 if (getConnection() != null && !getConnection().isClosed()) {
                     return;
@@ -59,9 +60,9 @@ public class DataHandler implements Listener {
                 setConnection();
 
                 plugin.getLogger().log(Level.INFO, "Database initialization successful.");
-                if (config.getStorage("type").equals("mysql")) {
+                if (config.getStorageType().equals("mysql")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INT NOT NULL AUTO_INCREMENT , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL , PRIMARY KEY (`id`))");
-                } else if (config.getStorage("type").equals("flatfile")) {
+                } else if (config.getStorageType().equals("flatfile")) {
                     asyncUpdate("CREATE TABLE IF NOT EXISTS avatarcreatures ( `id` INTEGER PRIMARY KEY , `name` TINYTEXT NOT NULL , `playeruuid` TINYTEXT NOT NULL , `entityuuid` TINYTEXT NOT NULL , `type` TINYTEXT NOT NULL , `alive` BOOLEAN NOT NULL , `killed` BOOLEAN NOT NULL)");
                 }
             }
@@ -72,19 +73,15 @@ public class DataHandler implements Listener {
         initializeOnlinePlayers();
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
-
     public void setConnection() throws SQLException {
-        if (config.getStorage("type").equals("mysql")) {
+        if (config.getStorageType().equals("mysql")) {
             try {
                 Class.forName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
             } catch (ClassNotFoundException e) {
                 plugin.getLogger().log(Level.SEVERE, "Error setting DB connection: " + e);
             }
             connection = hikari.getConnection();
-        } else if (config.getStorage("type").equals("flatfile")) {
+        } else if (config.getStorageType().equals("flatfile")) {
             File dataFolder = new File(plugin.getDataFolder(), "storage.db");
             if (!dataFolder.exists()) {
                 try {

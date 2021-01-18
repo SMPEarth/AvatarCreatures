@@ -13,7 +13,7 @@ public class MountEntityDamaged implements Listener {
     @EventHandler
     public void onMountEntityDamagedEvent(EntityDamageEvent e) {
         if (!e.getEntity().getPassengers().isEmpty() && e.getEntity().getPassengers() instanceof Player) {
-            if (e.getEntity() instanceof Ravager && Boolean.getBoolean(config.getAppaConfig("unmountWhenAppaDamaged"))) {
+            if (e.getEntity() instanceof Ravager && config.getAppaUnmountWhenAppaDamaged()) {
                 Player p = (Player) e.getEntity().getPassengers();
                 p.leaveVehicle();
             }

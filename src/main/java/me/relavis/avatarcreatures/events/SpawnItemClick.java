@@ -30,7 +30,7 @@ public class SpawnItemClick implements Listener {
         UUID playerUUID = player.getUniqueId();
 
         if (action == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
-            if (player.getInventory().getItemInMainHand().getType().equals(Material.matchMaterial(config.getAppaConfig("spawnItem"))) && player.hasPermission("avatarcreatures.appa.spawn")) {
+            if (player.getInventory().getItemInMainHand().getType().equals(Material.matchMaterial(config.getAppaSpawnItem())) && player.hasPermission("avatarcreatures.appa.spawn")) {
                 if (player.hasPermission("avatarcreatures.appa.spawn")) {
                     createEntity(event, playerUUID, EntityType.RAVAGER);
                     event.setCancelled(true);

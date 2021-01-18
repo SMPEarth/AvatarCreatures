@@ -22,7 +22,7 @@ public class MountMoveListener implements Listener {
 
     public static void onMountEntitySteer(PacketEvent e) {
         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && e.getPlayer().getVehicle() instanceof Ravager) {
-            double movementSpeed = Double.parseDouble(config.getAppaConfig("movementSpeed"));
+            double movementSpeed = config.getAppaMovementSpeed();
             PacketContainer packet = e.getPacket();
             Player player = e.getPlayer();
             Entity entity = player.getVehicle();

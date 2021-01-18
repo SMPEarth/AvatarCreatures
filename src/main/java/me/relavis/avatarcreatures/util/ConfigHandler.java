@@ -17,19 +17,31 @@ public class ConfigHandler {
 
     int currentVersion = 2;
 
+    @Getter
     String appaSpawnItem;
+    @Getter
     Double appaMovementSpeed;
+    @Getter
     Boolean appaUnmountWhenAppaDamaged;
+    @Getter
     Boolean appaUnmountWhenPlayerDamaged;
+    @Getter
     Boolean appaDespawnAfterUnmount;
+    @Getter
     int appaDespawnTime;
 
+    @Getter
     String storageType;
-    String host;
-    int port;
-    String database;
-    String username;
-    String password;
+    @Getter
+    String databaseHost;
+    @Getter
+    int databasePort;
+    @Getter
+    String databaseName;
+    @Getter
+    String databaseUsername;
+    @Getter
+    String databasePassword;
 
     int version;
 
@@ -47,11 +59,11 @@ public class ConfigHandler {
         appaDespawnTime = plugin.getConfig().getInt("appa.despawn-time");
 
         storageType = plugin.getConfig().getString("storage.storage-type");
-        host = plugin.getConfig().getString("storage.host");
-        port = plugin.getConfig().getInt("storage.port");
-        database = plugin.getConfig().getString("storage.database");
-        username = plugin.getConfig().getString("storage.username");
-        password = plugin.getConfig().getString("storage.password");
+        databaseHost = plugin.getConfig().getString("storage.host");
+        databasePort = plugin.getConfig().getInt("storage.port");
+        databaseName = plugin.getConfig().getString("storage.database");
+        databaseUsername = plugin.getConfig().getString("storage.username");
+        databasePassword = plugin.getConfig().getString("storage.password");
 
         version = plugin.getConfig().getInt("version");
 
@@ -86,41 +98,4 @@ public class ConfigHandler {
         }
     }
 
-    public String getAppaConfig(String message) {
-        switch (message) {
-            case "spawnItem":
-                return appaSpawnItem;
-            case "movementSpeed":
-                return appaMovementSpeed.toString();
-            case "unmountWhenAppaDamaged":
-                return appaUnmountWhenAppaDamaged.toString();
-            case "unmountWhenPlayerDamaged":
-                return appaUnmountWhenPlayerDamaged.toString();
-            case "despawnAfterUnmount":
-                return appaDespawnAfterUnmount.toString();
-            case "despawnTime":
-                return Integer.toString(appaDespawnTime);
-            default:
-                return null;
-        }
-    }
-
-    public String getStorage(String value) {
-        switch (value) {
-            case "type":
-                return storageType;
-            case "host":
-                return host;
-            case "port":
-                return Integer.toString(port);
-            case "database":
-                return database;
-            case "username":
-                return username;
-            case "password":
-                return password;
-            default:
-                return null;
-        }
-    }
 }
