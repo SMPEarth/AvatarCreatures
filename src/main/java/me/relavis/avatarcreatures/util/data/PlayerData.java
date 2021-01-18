@@ -1,6 +1,5 @@
 package me.relavis.avatarcreatures.util.data;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 
 import java.util.HashMap;

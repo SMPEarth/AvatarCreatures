@@ -22,7 +22,7 @@ public class MountMoveListener implements Listener {
 
     public static void onMountEntitySteer(PacketEvent e) {
         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && e.getPlayer().getVehicle() instanceof Ravager) {
-            Double movementSpeed = Double.parseDouble(config.getAppaConfig("movementSpeed"));
+            double movementSpeed = Double.parseDouble(config.getAppaConfig("movementSpeed"));
             PacketContainer packet = e.getPacket();
             Player player = e.getPlayer();
             Entity entity = player.getVehicle();
@@ -112,21 +112,6 @@ public class MountMoveListener implements Listener {
     }
 
     public static void updateClientView(Entity entity, Player player, float playerEyeYaw, float playerEyePitch) {
-/*        PacketContainer packet = new PacketContainer(
-                PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-        int entityID = entity.getEntityId();
-        packet.getIntegers()
-                .write(0, entityID);
-        packet.getFloat()
-                .write(1, playerEyeYaw);
-        try {
-            ProtocolLibrary.getProtocolManager()
-                    .sendServerPacket(player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
- */
         PacketContainer enforceRotation1 = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
         enforceRotation1.getIntegers().writeSafely(0, entity.getEntityId());
         enforceRotation1.getBytes().writeSafely(0, (byte) (playerEyeYaw * 256F / 360F));
