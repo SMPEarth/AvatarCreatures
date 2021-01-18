@@ -22,13 +22,13 @@ public class MountEntityUnmount implements Listener {
         if (e.getEntity() instanceof CraftPlayer) {
             Player player = (Player) e.getEntity();
             Entity entity = e.getDismounted();
-            switch(entity.getType()) {
+            switch (entity.getType()) {
                 case RAVAGER:
-                    if(Boolean.parseBoolean(config.getAppaConfig("despawnAfterUnmount"))) {
+                    if (Boolean.parseBoolean(config.getAppaConfig("despawnAfterUnmount"))) {
                         Bukkit.getServer().getScheduler().runTaskLater(AvatarCreatures.getInstance(), () -> {
-                                entity.remove();
-                                data.setAlive(player.getUniqueId(), entity.getUniqueId(), false);
-                                player.sendMessage(ChatColor.GREEN + "Your Appa flies away.");
+                            entity.remove();
+                            data.setAlive(player.getUniqueId(), entity.getUniqueId(), false);
+                            player.sendMessage(ChatColor.GREEN + "Your Appa flies away.");
                         }, Integer.parseInt(config.getAppaConfig("despawnTime")));
                     }
             }

@@ -3,9 +3,9 @@ version: ${version}
 main: me.relavis.avatarcreatures.AvatarCreatures
 api-version: 1.13
 prefix: AvatarCreatures
-authors: [relavis]
-depend: [ProtocolLib]
-softdepend: [Towny]
+authors: [ relavis ]
+depend: [ ProtocolLib ]
+softdepend: [ Towny ]
 description: Introduces Avatar creatures to Minecraft
 
 commands:

@@ -6,7 +6,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import lombok.Getter;
-import me.relavis.avatarcreatures.commands.AppaCommand;
 import me.relavis.avatarcreatures.events.*;
 import me.relavis.avatarcreatures.listeners.MountMoveListener;
 import me.relavis.avatarcreatures.util.CommandInitializer;
@@ -16,8 +15,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Objects;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 

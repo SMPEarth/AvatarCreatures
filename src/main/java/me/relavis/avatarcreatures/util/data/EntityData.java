@@ -9,15 +9,20 @@ import java.util.UUID;
 
 public class EntityData {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     int mountID;
-    @Getter @Setter
+    @Getter
+    @Setter
     EntityType entityType;
-    @Getter @Setter
+    @Getter
+    @Setter
     String entityName;
-    @Getter @Setter
+    @Getter
+    @Setter
     UUID entityUUID;
-    @Getter @Setter
+    @Getter
+    @Setter
     boolean entityAlive;
 
     public EntityData(UUID entityUUID) {
