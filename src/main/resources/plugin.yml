@@ -1,5 +1,5 @@
 name: AvatarCreatures
-version: ${avatarcreatures.version}
+version: ${version}
 main: me.relavis.avatarcreatures.AvatarCreatures
 api-version: 1.13
 prefix: AvatarCreatures
