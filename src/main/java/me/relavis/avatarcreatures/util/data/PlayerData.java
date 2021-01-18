@@ -23,14 +23,14 @@ public class PlayerData {
     }
 
     public String getEntityDisplayName(UUID entityUUID) {
-        return entityData.get(entityUUID).getEntityDisplayName();
+        return entityData.get(entityUUID).getEntityName();
     }
 
     @Deprecated
     public String getEntityDisplayName(EntityType entityType) {
         for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
             if (entityData.get(pair.getKey()).getEntityType() == entityType) {
-                return entityData.get(pair.getKey()).getEntityDisplayName();
+                return entityData.get(pair.getKey()).getEntityName();
             }
         }
         return null;
@@ -46,15 +46,15 @@ public class PlayerData {
         return null;
     }
 
-    public boolean getEntityAlive(UUID entityUUID) {
-        return entityData.get(entityUUID).getEntityAlive();
+    public boolean isEntityAlive(UUID entityUUID) {
+        return entityData.get(entityUUID).isEntityAlive();
     }
 
     @Deprecated
-    public boolean getEntityAlive(EntityType entityType) {
+    public boolean isEntityAlive(EntityType entityType) {
         for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
             if (entityData.get(pair.getKey()).getEntityType() == entityType) {
-                return entityData.get(pair.getKey()).getEntityAlive();
+                return entityData.get(pair.getKey()).isEntityAlive();
             }
         }
         return false;

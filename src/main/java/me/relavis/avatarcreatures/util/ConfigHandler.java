@@ -1,5 +1,6 @@
 package me.relavis.avatarcreatures.util;
 
+import lombok.Getter;
 import me.relavis.avatarcreatures.AvatarCreatures;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,6 +11,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public class ConfigHandler {
+
+    @Getter
     private static ConfigHandler instance;
 
     int currentVersion = 2;
@@ -29,10 +32,6 @@ public class ConfigHandler {
     String password;
 
     int version;
-
-    public static ConfigHandler getInstance() {
-        return instance;
-    }
 
     public void configSetup() {
         AvatarCreatures plugin = AvatarCreatures.getInstance();

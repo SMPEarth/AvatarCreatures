@@ -1,6 +1,7 @@
 package me.relavis.avatarcreatures.util;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.Getter;
 import me.relavis.avatarcreatures.AvatarCreatures;
 import me.relavis.avatarcreatures.util.data.PlayerData;
 import org.bukkit.Bukkit;
@@ -26,17 +27,15 @@ import static java.util.UUID.fromString;
 
 public class DataHandler implements Listener {
 
+    @Getter
     private static DataHandler instance;
+
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final HashMap<UUID, PlayerData> playerData = new HashMap<>();
     ConfigHandler config = ConfigHandler.getInstance();
     AvatarCreatures plugin = AvatarCreatures.getInstance();
     private HikariDataSource hikari;
     private Connection connection;
-
-    public static DataHandler getInstance() {
-        return instance;
-    }
 
     // Initialize storage
     public void dataSetup() {
@@ -151,7 +150,7 @@ public class DataHandler implements Listener {
         playerData.get(player.getUniqueId()).getEntityData().forEach((entityUUID, EntityData) -> {
             String entityName = playerData.get(player.getUniqueId()).getEntityDisplayName(entityUUID);
             EntityType entityType = playerData.get(player.getUniqueId()).getEntityType(entityUUID);
-            boolean entityAlive = playerData.get(player.getUniqueId()).getEntityAlive(entityUUID);
+            boolean entityAlive = playerData.get(player.getUniqueId()).isEntityAlive(entityUUID);
             int mountID = playerData.get(player.getUniqueId()).getMountID(entityUUID);
             this.service.execute(() -> {
                 if (mountID == -1) {
@@ -358,12 +357,12 @@ public class DataHandler implements Listener {
 
     // Check if entity of certain player and type is alive
     public boolean isAlive(UUID playerUUID, UUID entityUUID) {
-        return playerData.get(playerUUID).getEntityAlive(entityUUID);
+        return playerData.get(playerUUID).isEntityAlive(entityUUID);
     }
 
     @Deprecated
     public boolean isAlive(UUID playerUUID, EntityType entityType) {
-        return playerData.get(playerUUID).getEntityAlive(entityType);
+        return playerData.get(playerUUID).isEntityAlive(entityType);
     }
 
     public boolean isAliveFromUUID(UUID entityUUID) {

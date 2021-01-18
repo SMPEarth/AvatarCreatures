@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import lombok.Getter;
 import me.relavis.avatarcreatures.commands.AppaCommand;
 import me.relavis.avatarcreatures.events.*;
 import me.relavis.avatarcreatures.listeners.MountMoveListener;
@@ -19,13 +20,11 @@ import java.util.Objects;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
+
+    @Getter
     private static AvatarCreatures instance;
+
     ConfigHandler config = new ConfigHandler();
-
-
-    public static AvatarCreatures getInstance() {
-        return instance;
-    }
 
     @Override
     public void onEnable() {
