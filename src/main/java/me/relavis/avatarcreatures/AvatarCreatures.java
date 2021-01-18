@@ -9,6 +9,7 @@ import lombok.Getter;
 import me.relavis.avatarcreatures.commands.AppaCommand;
 import me.relavis.avatarcreatures.events.*;
 import me.relavis.avatarcreatures.listeners.MountMoveListener;
+import me.relavis.avatarcreatures.util.CommandInitializer;
 import me.relavis.avatarcreatures.util.ConfigHandler;
 import me.relavis.avatarcreatures.util.DataHandler;
 import org.bstats.bukkit.Metrics;
@@ -47,7 +48,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new SpawnItemClick(), this);
         Bukkit.getPluginManager().registerEvents(new TownyMobRemoval(), this);
 
-        Objects.requireNonNull(this.getCommand("appa")).setExecutor(new AppaCommand());
+        new CommandInitializer();
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
                 ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
