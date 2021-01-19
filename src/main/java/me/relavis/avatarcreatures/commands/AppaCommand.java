@@ -38,10 +38,11 @@ public class AppaCommand extends BaseCommand {
         name = Arrays.copyOfRange(name, 1, name.length);
         newName = Joiner.on(' ').skipNulls().join(name);
         if (data.entityExists(playerUUID, type)) {
-            if (data.isAlive(playerUUID, type)) {
+            UUID entityUUID = data.getEntityUUID(playerUUID, type);
+            if (data.isAlive(playerUUID, entityUUID)) {
                 if (newName.length() < 16) {
                     if (newName.trim().length() > 0) {
-                        data.setEntityName(playerUUID, type, newName, true);
+                        data.setEntityName(playerUUID, entityUUID, newName, true);
                         player.sendMessage(ChatColor.GREEN + "Name changed successfully.");
                     } else {
                         player.sendMessage(ChatColor.RED + "Names cannot be blank.");
@@ -62,13 +63,12 @@ public class AppaCommand extends BaseCommand {
     @CommandPermission("avatarcreatures.appa.away")
     @CommandCompletion("@nothing")
     public void away(Player player) {
-        String newName;
         UUID playerUUID = player.getUniqueId();
         //TODO remove hardcode
         EntityType type = EntityType.RAVAGER;
         if (data.entityExists(playerUUID, type)) {
-            if (data.isAlive(playerUUID, type)) {
-                UUID entityUUID = data.getEntityUUID(playerUUID, type);
+            UUID entityUUID = data.getEntityUUID(playerUUID, type);
+            if (data.isAlive(playerUUID, entityUUID)) {
                 Entity entity = data.getEntityByUniqueId(entityUUID);
                 entity.remove();
                 data.setAlive(playerUUID, entityUUID, false);
@@ -86,13 +86,12 @@ public class AppaCommand extends BaseCommand {
     @CommandPermission("avatarcreatures.appa.call")
     @CommandCompletion("@nothing")
     public void call(Player player) {
-        String newName;
         UUID playerUUID = player.getUniqueId();
         //TODO remove hardcode
         EntityType type = EntityType.RAVAGER;
         if (data.entityExists(playerUUID, type)) {
-            if (data.isAlive(playerUUID, type)) {
-                UUID entityUUID = data.getEntityUUID(playerUUID, type);
+            UUID entityUUID = data.getEntityUUID(playerUUID, type);
+            if (data.isAlive(playerUUID, entityUUID)) {
                 Entity entity = data.getEntityByUniqueId(entityUUID);
 
                 Location playerLocation = player.getLocation();
@@ -105,10 +104,10 @@ public class AppaCommand extends BaseCommand {
                         entity.setRemoveWhenFarAway(false);
                         entity.setGravity(false);
                         entity.setCustomNameVisible(true);
-                        entity.setCustomName(data.getEntityName(playerUUID, type)); // Change entity name to whatever is in DB
-                        UUID entityUUID = entity.getUniqueId(); // Get new entity UUID
-                        data.updateEntityUUID(playerUUID, entity.getType(), entityUUID); // Update entity UUID to new UUID
-                        data.setAlive(playerUUID, entityUUID, true); // Set entity's state
+                        entity.setCustomName(data.getEntityName(playerUUID, entity.getUniqueId())); // Change entity name to whatever is in DB
+                        UUID newEntityUUID = entity.getUniqueId(); // Get new entity UUID
+                        data.updateEntityUUID(playerUUID, entity.getUniqueId(), newEntityUUID); // Update entity UUID to new UUID
+                        data.setAlive(playerUUID, newEntityUUID, true); // Set entity's state
                         player.sendMessage(ChatColor.GREEN + "Your Appa comes to you.");
                     });
                 }

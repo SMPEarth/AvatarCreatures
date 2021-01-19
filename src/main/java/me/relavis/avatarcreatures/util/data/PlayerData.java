@@ -27,16 +27,6 @@ public class PlayerData {
     }
 
     @Deprecated
-    public String getEntityDisplayName(EntityType entityType) {
-        for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
-            if (entityData.get(pair.getKey()).getEntityType() == entityType) {
-                return entityData.get(pair.getKey()).getEntityName();
-            }
-        }
-        return null;
-    }
-
-    @Deprecated
     public UUID getEntityUUID(EntityType entityType) {
         for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
             if (entityData.get(pair.getKey()).getEntityType() == entityType) {
@@ -48,16 +38,6 @@ public class PlayerData {
 
     public boolean isEntityAlive(UUID entityUUID) {
         return entityData.get(entityUUID).isEntityAlive();
-    }
-
-    @Deprecated
-    public boolean isEntityAlive(EntityType entityType) {
-        for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
-            if (entityData.get(pair.getKey()).getEntityType() == entityType) {
-                return entityData.get(pair.getKey()).isEntityAlive();
-            }
-        }
-        return false;
     }
 
     public boolean getEntityExists(UUID entityUUID) {
@@ -78,34 +58,12 @@ public class PlayerData {
         entityData.get(entityUUID).setEntityDisplayName(entityName, rename);
     }
 
-    @Deprecated
-    public void setEntityDisplayName(EntityType entityType, String entityName, boolean rename) {
-        for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
-            if (entityData.get(pair.getKey()).getEntityType() == entityType) {
-                entityData.get(pair.getKey()).setEntityDisplayName(entityName, rename);
-            }
-        }
-    }
-
     public void setEntityUUID(UUID entityUUID, UUID newEntityUUID) {
         EntityData data = entityData.get(entityUUID);
         entityData.remove(entityUUID);
 
         data.setEntityUUID(newEntityUUID);
         entityData.put(newEntityUUID, data);
-    }
-
-    @Deprecated
-    public void setEntityUUID(EntityType entityType, UUID newEntityUUID) {
-        for (Map.Entry<UUID, EntityData> pair : entityData.entrySet()) {
-            if (entityData.get(pair.getKey()).getEntityType() == entityType) {
-                EntityData data = entityData.get(pair.getKey());
-                entityData.remove(pair.getKey());
-
-                data.setEntityUUID(newEntityUUID);
-                entityData.put(newEntityUUID, data);
-            }
-        }
     }
 
     public EntityType getEntityType(UUID entityUUID) {

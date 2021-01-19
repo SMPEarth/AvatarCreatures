@@ -213,6 +213,7 @@ public class DataHandler implements Listener {
         return playerData.get(playerUUID).getEntityExists(entityUUID);
     }
 
+    // TODO Determine if this needs to actually be deprecated
     @Deprecated
     public boolean entityExists(UUID playerUUID, EntityType entityType) {
         return playerData.get(playerUUID).getEntityExists(entityType);
@@ -231,6 +232,7 @@ public class DataHandler implements Listener {
 
     // Get entity UUID
     @Deprecated
+    // TODO Determine if this needs to actually be deprecated
     public UUID getEntityUUID(UUID playerUUID, EntityType entityType) {
         return playerData.get(playerUUID).getEntityUUID(entityType);
     }
@@ -279,25 +281,9 @@ public class DataHandler implements Listener {
         return playerData.get(playerUUID).getEntityDisplayName(entityUUID);
     }
 
-    @Deprecated
-    public String getEntityName(UUID playerUUID, EntityType entityType) {
-        return playerData.get(playerUUID).getEntityDisplayName(entityType);
-    }
-
     // Set entity name if it exists
     public void setEntityName(UUID playerUUID, UUID entityUUID, String newName, boolean rename) {
         playerData.get(playerUUID).setEntityDisplayName(entityUUID, newName, rename);
-    }
-
-    @Deprecated
-    public void setEntityName(UUID playerUUID, EntityType entityType, String newName, boolean rename) {
-        playerData.get(playerUUID).setEntityDisplayName(entityType, newName, rename);
-    }
-
-    @Deprecated
-    // Create entity
-    public void addEntityToData(String playerName, UUID playerUUID, UUID entityUUID, EntityType entityType) {
-        playerData.get(playerUUID).initializeEntity(-1, entityType, playerName + "'s Appa", entityUUID, true);
     }
 
     public void addEntityToData(UUID playerUUID, int mountID, EntityType entityType, String entityName, UUID entityUUID, boolean entityAlive) {
@@ -342,11 +328,6 @@ public class DataHandler implements Listener {
         playerData.get(playerUUID).setEntityUUID(entityUUID, newEntityUUID);
     }
 
-    @Deprecated
-    public void updateEntityUUID(UUID playerUUID, EntityType entityType, UUID newEntityUUID) {
-        playerData.get(playerUUID).setEntityUUID(entityType, newEntityUUID);
-    }
-
     // Check if player is the owner of entity
     public boolean isOwner(UUID playerUUID, UUID entityUUID) {
         return playerData.get(playerUUID).ownsEntity(entityUUID);
@@ -355,11 +336,6 @@ public class DataHandler implements Listener {
     // Check if entity of certain player and type is alive
     public boolean isAlive(UUID playerUUID, UUID entityUUID) {
         return playerData.get(playerUUID).isEntityAlive(entityUUID);
-    }
-
-    @Deprecated
-    public boolean isAlive(UUID playerUUID, EntityType entityType) {
-        return playerData.get(playerUUID).isEntityAlive(entityType);
     }
 
     public boolean isAliveFromUUID(UUID entityUUID) {

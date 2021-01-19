@@ -44,8 +44,13 @@ public class SpawnItemClick implements Listener {
     public void createEntity(PlayerInteractEvent event, UUID playerUUID, EntityType type) {
         Player player = event.getPlayer();
         Location loc = Objects.requireNonNull(event.getClickedBlock()).getLocation();
-        boolean isAlive = data.isAlive(playerUUID, type);
-
+        UUID oldEntityUUID = data.getEntityUUID(playerUUID, EntityType.RAVAGER);
+        boolean isAlive;
+        if(oldEntityUUID != null) {
+            isAlive = data.isAlive(playerUUID, oldEntityUUID);
+        } else {
+            isAlive = false;
+        }
         if (isAlive) { // Check if player's mount entity is already spawned in
             player.sendMessage(ChatColor.RED + "You already have an Appa! Use " + ChatColor.GOLD + "/appa call" + ChatColor.RED + " to call your Appa.");
         } else { // If it isn't:
