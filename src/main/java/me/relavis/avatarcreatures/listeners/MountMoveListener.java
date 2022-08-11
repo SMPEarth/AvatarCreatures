@@ -12,9 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 public class MountMoveListener implements Listener {
-
-    static ConfigHandler config = ConfigHandler.getInstance();
-
+    static final ConfigHandler config = ConfigHandler.getInstance();
 
     public static void onMountEntitySteer(PacketEvent e) {
         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && e.getPlayer().getVehicle() instanceof Ravager) {

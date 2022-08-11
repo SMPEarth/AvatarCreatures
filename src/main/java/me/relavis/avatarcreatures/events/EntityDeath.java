@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class EntityDeath implements Listener {
 
-    DataHandler data = DataHandler.getInstance();
+    final DataHandler data = DataHandler.getInstance();
 
     @EventHandler
     public void onMountEntityDeath(EntityDeathEvent e) {

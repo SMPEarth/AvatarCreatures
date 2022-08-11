@@ -22,7 +22,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
     @Getter
     private static AvatarCreatures instance;
 
-    ConfigHandler config = new ConfigHandler();
+    final ConfigHandler config = new ConfigHandler();
 
     @Override
     public void onEnable() {

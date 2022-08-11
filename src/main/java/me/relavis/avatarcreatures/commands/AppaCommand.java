@@ -19,7 +19,7 @@ import java.util.UUID;
 @CommandAlias("appa")
 public class AppaCommand extends BaseCommand {
 
-    DataHandler data = DataHandler.getInstance();
+    final DataHandler data = DataHandler.getInstance();
 
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {

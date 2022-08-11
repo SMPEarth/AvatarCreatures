@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class PlayerData {
     private final HashMap<UUID, EntityData> entityData = new HashMap<>();
-    UUID playerUUID;
+    final UUID playerUUID;
 
     public PlayerData(UUID playerUUID) {
         this.playerUUID = playerUUID;

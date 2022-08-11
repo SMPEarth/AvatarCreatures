@@ -32,8 +32,8 @@ public class DataHandler implements Listener {
 
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final HashMap<UUID, PlayerData> playerData = new HashMap<>();
-    ConfigHandler config = ConfigHandler.getInstance();
-    AvatarCreatures plugin = AvatarCreatures.getInstance();
+    final ConfigHandler config = ConfigHandler.getInstance();
+    final AvatarCreatures plugin = AvatarCreatures.getInstance();
     private HikariDataSource hikari;
     @Getter
     private Connection connection;
