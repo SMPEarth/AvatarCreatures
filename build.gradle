@@ -27,8 +27,8 @@ dependencies {
 }
 
 group = 'me.relavis.avatarcreatures'
-version = '1.2'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+version = '1.2.1'
+java.sourceCompatibility = JavaVersion.VERSION_17
 compileJava.options.encoding = "UTF-8"
 compileJava.options.compilerArgs += ["-parameters"]
 compileJava.options.fork = true
