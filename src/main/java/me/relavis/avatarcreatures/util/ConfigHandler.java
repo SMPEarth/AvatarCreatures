@@ -15,7 +15,7 @@ public class ConfigHandler {
     @Getter
     private static ConfigHandler instance;
 
-    int currentVersion = 2;
+    final int currentVersion = 2;
 
     @Getter
     String appaSpawnItem;

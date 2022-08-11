@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class PlayerJoin implements Listener {
-    DataHandler data = DataHandler.getInstance();
+    final DataHandler data = DataHandler.getInstance();
 
     @EventHandler
     public void onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent e) {

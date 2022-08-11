@@ -29,11 +29,10 @@ public class DataHandler implements Listener {
 
     @Getter
     private static DataHandler instance;
-
+    final ConfigHandler config = ConfigHandler.getInstance();
+    final AvatarCreatures plugin = AvatarCreatures.getInstance();
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final HashMap<UUID, PlayerData> playerData = new HashMap<>();
-    ConfigHandler config = ConfigHandler.getInstance();
-    AvatarCreatures plugin = AvatarCreatures.getInstance();
     private HikariDataSource hikari;
     @Getter
     private Connection connection;
@@ -152,8 +151,7 @@ public class DataHandler implements Listener {
             this.service.execute(() -> {
                 if (mountID == -1) {
                     try {
-                        PreparedStatement statement = getConnection()
-                                .prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive,killed) VALUES (?,?,?,?,?,?,?)");
+                        PreparedStatement statement = getConnection().prepareStatement("INSERT INTO avatarcreatures (id,name,playeruuid,entityuuid,type,alive,killed) VALUES (?,?,?,?,?,?,?)");
                         statement.setString(1, null);
                         statement.setString(2, entityName);
                         statement.setString(3, player.getUniqueId().toString());
@@ -168,8 +166,7 @@ public class DataHandler implements Listener {
                     }
                 } else {
                     try {
-                        PreparedStatement statement = getConnection()
-                                .prepareStatement("UPDATE avatarcreatures SET name=?, entityuuid=?, alive=? WHERE id=?");
+                        PreparedStatement statement = getConnection().prepareStatement("UPDATE avatarcreatures SET name=?, entityuuid=?, alive=? WHERE id=?");
                         statement.setString(1, entityName);
                         statement.setString(2, entityUUID.toString());
                         statement.setBoolean(3, entityAlive);
@@ -194,8 +191,7 @@ public class DataHandler implements Listener {
 
     public boolean playerHasData(Player player) {
         try {
-            PreparedStatement statement = getConnection()
-                    .prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=?");
+            PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM avatarcreatures WHERE playeruuid=?");
             statement.setString(1, player.getUniqueId().toString());
             ResultSet results = statement.executeQuery();
             if (results.next()) {
@@ -222,8 +218,7 @@ public class DataHandler implements Listener {
     public Entity getEntityByUniqueId(UUID entityUUID) {
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
-                if (entity.getUniqueId().equals(entityUUID))
-                    return entity;
+                if (entity.getUniqueId().equals(entityUUID)) return entity;
             }
         }
 
@@ -252,8 +247,7 @@ public class DataHandler implements Listener {
             return true;
         } else {
             try {
-                PreparedStatement statement = getConnection()
-                        .prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
+                PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM avatarcreatures WHERE entityuuid=?");
                 statement.setString(1, entityUUID.toString());
                 ResultSet results = statement.executeQuery();
                 if (results.next()) {
@@ -296,8 +290,7 @@ public class DataHandler implements Listener {
 
         this.service.execute(() -> {
             try {
-                PreparedStatement statement = getConnection()
-                        .prepareStatement("DELETE FROM avatarcreatures WHERE entityuuid=?");
+                PreparedStatement statement = getConnection().prepareStatement("DELETE FROM avatarcreatures WHERE entityuuid=?");
                 statement.setString(1, String.valueOf(entityUUID));
                 statement.executeUpdate();
                 statement.close();
@@ -310,8 +303,7 @@ public class DataHandler implements Listener {
     public void setEntityKilled(UUID entityUUID) {
         this.service.execute(() -> {
             try {
-                PreparedStatement statement = getConnection()
-                        .prepareStatement("UPDATE avatarcreatures SET alive=?, killed=? WHERE entityuuid=?");
+                PreparedStatement statement = getConnection().prepareStatement("UPDATE avatarcreatures SET alive=?, killed=? WHERE entityuuid=?");
                 statement.setBoolean(1, false);
                 statement.setBoolean(2, true);
                 statement.setString(3, entityUUID.toString());
@@ -341,8 +333,7 @@ public class DataHandler implements Listener {
     public boolean isAliveFromUUID(UUID entityUUID) {
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
-                if (entity.getUniqueId().equals(entityUUID))
-                    return true;
+                if (entity.getUniqueId().equals(entityUUID)) return true;
             }
         }
         return false;

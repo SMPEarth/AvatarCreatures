@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class EntityMount implements Listener {
 
-    DataHandler data = DataHandler.getInstance();
+    final DataHandler data = DataHandler.getInstance();
 
     @EventHandler
     public void onRightClickEntity(PlayerInteractEntityEvent e) {

@@ -7,7 +7,7 @@
 <br />
 <div align="center">
 
-  <h1 align="center">AvatarCreatures</h3>
+  <h1 align="center">AvatarCreatures</h1>
 
   <p align="center">
     AvatarCreatures is a Minecraft server plugin that allows you to adopt pets such as Appa from the Avatar series!

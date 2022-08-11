@@ -13,13 +13,12 @@ import org.spigotmc.event.entity.EntityDismountEvent;
 
 public class EntityUnmount implements Listener {
 
-    ConfigHandler config = ConfigHandler.getInstance();
-    DataHandler data = DataHandler.getInstance();
+    final ConfigHandler config = ConfigHandler.getInstance();
+    final DataHandler data = DataHandler.getInstance();
 
     @EventHandler
     public void onEntityUnmount(EntityDismountEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player player = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player player) {
             Entity entity = e.getDismounted();
             switch (entity.getType()) {
                 case RAVAGER:

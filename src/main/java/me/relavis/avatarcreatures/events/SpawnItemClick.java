@@ -19,8 +19,8 @@ import java.util.UUID;
 
 public class SpawnItemClick implements Listener {
 
-    DataHandler data = DataHandler.getInstance();
-    ConfigHandler config = ConfigHandler.getInstance();
+    final DataHandler data = DataHandler.getInstance();
+    final ConfigHandler config = ConfigHandler.getInstance();
 
     @EventHandler
     public void onItemRightClick(PlayerInteractEvent event) {

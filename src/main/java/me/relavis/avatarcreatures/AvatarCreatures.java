@@ -7,7 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import lombok.Getter;
 import me.relavis.avatarcreatures.events.*;
-import me.relavis.avatarcreatures.listeners.MountMoveListener;
+import me.relavis.avatarcreatures.events.EntityMove;
 import me.relavis.avatarcreatures.util.CommandInitializer;
 import me.relavis.avatarcreatures.util.ConfigHandler;
 import me.relavis.avatarcreatures.util.DataHandler;
@@ -18,11 +18,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class AvatarCreatures extends JavaPlugin implements Listener {
 
-
     @Getter
     private static AvatarCreatures instance;
 
-    ConfigHandler config = new ConfigHandler();
+    final ConfigHandler config = new ConfigHandler();
 
     @Override
     public void onEnable() {
@@ -46,16 +45,9 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
 
         new CommandInitializer();
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
-                ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
             public void onPacketReceiving(PacketEvent event) {
-                MountMoveListener.onMountEntitySteer(event);
-            }
-        });
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this,
-                ListenerPriority.HIGHEST, PacketType.Play.Client.VEHICLE_MOVE) {
-            public void onPacketReceiving(PacketEvent event) {
-                MountMoveListener.onMountEntityMove(event);
+                EntityMove.onMountEntitySteer(event);
             }
         });
 

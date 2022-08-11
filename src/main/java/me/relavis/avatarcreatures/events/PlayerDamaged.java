@@ -8,12 +8,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class PlayerDamaged implements Listener {
-    ConfigHandler config = ConfigHandler.getInstance();
+    final ConfigHandler config = ConfigHandler.getInstance();
 
     @EventHandler
     public void onPlayerDamagedEvent(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player p = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player p) {
 
             if (p.isInsideVehicle()) {
                 if (p.getVehicle() instanceof Ravager && config.getAppaUnmountWhenPlayerDamaged()) {

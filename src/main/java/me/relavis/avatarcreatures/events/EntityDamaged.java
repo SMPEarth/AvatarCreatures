@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class EntityDamaged implements Listener {
-    ConfigHandler config = ConfigHandler.getInstance();
+    final ConfigHandler config = ConfigHandler.getInstance();
 
     @EventHandler
     public void onMountEntityDamagedEvent(EntityDamageEvent e) {

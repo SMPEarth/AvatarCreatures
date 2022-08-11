@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class TownyMobRemoval implements Listener {
 
-    DataHandler data = DataHandler.getInstance();
+    final DataHandler data = DataHandler.getInstance();
 
     @EventHandler
     public void onTownyMobRemove(MobRemovalEvent e) {
