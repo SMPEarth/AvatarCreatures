@@ -82,9 +82,7 @@ public class MountMoveListener implements Listener {
             Player player = e.getPlayer();
             Location playerEye = player.getEyeLocation();
 
-            packet.getFloat()
-                    .write(0, playerEye.getYaw())
-                    .write(1, playerEye.getPitch());
+            packet.getFloat().write(0, playerEye.getYaw()).write(1, playerEye.getPitch());
 
             e.setPacket(packet);
         }

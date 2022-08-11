@@ -8,8 +8,7 @@ import me.relavis.avatarcreatures.commands.AppaCommand;
 public class CommandInitializer {
 
     @Getter
-    final
-    PaperCommandManager manager = new PaperCommandManager(AvatarCreatures.getInstance());
+    final PaperCommandManager manager = new PaperCommandManager(AvatarCreatures.getInstance());
 
     public CommandInitializer() {
         manager.registerCommand(new AppaCommand());
