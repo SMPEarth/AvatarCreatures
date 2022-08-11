@@ -1,4 +1,4 @@
-package me.relavis.avatarcreatures.listeners;
+package me.relavis.avatarcreatures.events;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Ravager;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
-public class MountMoveListener implements Listener {
+public class EntityMove implements Listener {
     static final ConfigHandler config = ConfigHandler.getInstance();
 
     public static void onMountEntitySteer(PacketEvent e) {
@@ -73,18 +73,6 @@ public class MountMoveListener implements Listener {
                 moveEntity(player, entity, movementSpeed, playerDirection);
             }
 
-        }
-    }
-
-    public static void onMountEntityMove(PacketEvent e) {
-        if (e.getPacketType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION && e.getPlayer().getVehicle() instanceof Ravager) {
-            PacketContainer packet = e.getPacket();
-            Player player = e.getPlayer();
-            Location playerEye = player.getEyeLocation();
-
-            packet.getFloat().write(0, playerEye.getYaw()).write(1, playerEye.getPitch());
-
-            e.setPacket(packet);
         }
     }
 

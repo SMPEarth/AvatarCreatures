@@ -7,7 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import lombok.Getter;
 import me.relavis.avatarcreatures.events.*;
-import me.relavis.avatarcreatures.listeners.MountMoveListener;
+import me.relavis.avatarcreatures.events.EntityMove;
 import me.relavis.avatarcreatures.util.CommandInitializer;
 import me.relavis.avatarcreatures.util.ConfigHandler;
 import me.relavis.avatarcreatures.util.DataHandler;
@@ -47,12 +47,7 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
             public void onPacketReceiving(PacketEvent event) {
-                MountMoveListener.onMountEntitySteer(event);
-            }
-        });
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Client.VEHICLE_MOVE) {
-            public void onPacketReceiving(PacketEvent event) {
-                MountMoveListener.onMountEntityMove(event);
+                EntityMove.onMountEntitySteer(event);
             }
         });
 
