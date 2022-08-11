@@ -6,26 +6,29 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     maven {
-        url = uri('http://repo.volmit.com/repository/volmit/')
+        url = uri('https://repo.papermc.io/repository/maven-public/')
     }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
     maven {
         url = uri('https://repo.maven.apache.org/maven2/')
+    }
+    mavenCentral()
+    maven {
+        url = 'https://repo.glaremasters.me/repository/towny/'
     }
 }
 
 dependencies {
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation 'com.zaxxer:HikariCP:5.0.1'
-    implementation 'co.aikar:acf-paper:0.5.0-SNAPSHOT'
-    compileOnly 'org.spigotmc:spigot-api:1.19.1-R0.1-SNAPSHOT'
-    compileOnly 'org.bukkit.craftbukkit:1.16.4:1.16.4'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.1'
+    implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:dev-bundle:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly 'com.github.TownyAdvanced:Towny:0.96.2.0'
+    compileOnly 'com.palmergames.bukkit.towny:towny:0.98.2.0'
     compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
 group = 'me.relavis.avatarcreatures'
@@ -71,8 +74,6 @@ shadowJar {
     zip64 true
     minimize()
     project.configurations.implementation.canBeResolved = true
-    project.configurations.runtime.canBeResolved = true
-    project.configurations.compile.canBeResolved = true
     archiveFileName = finalJarPath
 }
 
