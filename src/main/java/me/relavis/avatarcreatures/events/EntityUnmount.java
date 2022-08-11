@@ -5,7 +5,6 @@ import me.relavis.avatarcreatures.util.ConfigHandler;
 import me.relavis.avatarcreatures.util.DataHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +18,7 @@ public class EntityUnmount implements Listener {
 
     @EventHandler
     public void onEntityUnmount(EntityDismountEvent e) {
-        if (e.getEntity() instanceof CraftPlayer) {
+        if (e.getEntity() instanceof Player) {
             Player player = (Player) e.getEntity();
             Entity entity = e.getDismounted();
             switch (entity.getType()) {
