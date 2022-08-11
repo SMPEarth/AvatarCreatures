@@ -26,7 +26,6 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         instance = this;
 
         config.configSetup();
@@ -66,7 +65,6 @@ public final class AvatarCreatures extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         DataHandler data = DataHandler.getInstance();
         data.unloadOnlinePlayers();
     }
