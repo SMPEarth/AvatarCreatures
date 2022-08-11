@@ -28,7 +28,7 @@ dependencies {
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.1'
     compileOnly 'org.jetbrains:annotations:17.0.0'
     compileOnly 'com.github.TownyAdvanced:Towny:0.96.2.0'
-    compileOnly 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 }
 
