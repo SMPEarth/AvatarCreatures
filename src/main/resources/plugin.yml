@@ -1,7 +1,7 @@
 name: AvatarCreatures
 version: ${version}
 main: me.relavis.avatarcreatures.AvatarCreatures
-api-version: 1.13
+api-version: 1.19
 prefix: AvatarCreatures
 authors: [ relavis ]
 depend: [ ProtocolLib ]

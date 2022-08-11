@@ -25,9 +25,5 @@ storage:
   username: "root"
   password: "password"
 
-
-
-
-
 # DO NOT CHANGE THIS VALUE! This is used for internal purposes. Changing this may result in errors.
 version: 2

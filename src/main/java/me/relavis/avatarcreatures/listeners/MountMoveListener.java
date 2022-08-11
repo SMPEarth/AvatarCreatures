@@ -1,19 +1,15 @@
 package me.relavis.avatarcreatures.listeners;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.relavis.avatarcreatures.util.ConfigHandler;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Ravager;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class MountMoveListener implements Listener {
 
@@ -97,36 +93,6 @@ public class MountMoveListener implements Listener {
     }
 
     public static void moveEntity(Player player, Entity entity, double speed, Vector vector) {
-        //Original method:
-        //entity.setVelocity(vector.normalize().multiply(speed));
-
-        Location playerEye = player.getEyeLocation();
-        float playerEyeYaw = playerEye.getYaw();
-        float playerEyePitch = playerEye.getPitch();
-
-        double xAdd = vector.getX();
-        double yAdd = vector.getY();
-        double zAdd = vector.getZ();
-        ((CraftEntity) entity).getHandle().setMot(xAdd, yAdd, zAdd);
-        updateClientView(entity, player, playerEyeYaw, playerEyePitch);
-    }
-
-    public static void updateClientView(Entity entity, Player player, float playerEyeYaw, float playerEyePitch) {
-        PacketContainer enforceRotation1 = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-        enforceRotation1.getIntegers().writeSafely(0, entity.getEntityId());
-        enforceRotation1.getBytes().writeSafely(0, (byte) (playerEyeYaw * 256F / 360F));
-
-        PacketContainer enforceRotation2 = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_LOOK);
-        enforceRotation2.getIntegers().writeSafely(0, entity.getEntityId());
-        enforceRotation2.getBytes().writeSafely(0, (byte) (playerEyeYaw * 256F / 360F));
-        enforceRotation2.getBytes().writeSafely(1, (byte) (playerEyePitch * 256F / 360F));
-        try {
-            ProtocolLibrary.getProtocolManager()
-                    .sendServerPacket(player, enforceRotation1);
-            ProtocolLibrary.getProtocolManager()
-                    .sendServerPacket(player, enforceRotation2);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        entity.setVelocity(vector.normalize().multiply(speed));
     }
 }
