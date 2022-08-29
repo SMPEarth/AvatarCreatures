@@ -21,7 +21,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly 'com.palmergames.bukkit.towny:towny:0.98.3.4'
+    compileOnly 'com.palmergames.bukkit.towny:towny:0.98.3.6'
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
