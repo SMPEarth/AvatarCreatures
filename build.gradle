@@ -22,7 +22,7 @@ dependencies {
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'org.jetbrains:annotations:23.0.0'
     compileOnly 'com.palmergames.bukkit.towny:towny:0.98.3.4'
-    compileOnly 'org.projectlombok:lombok:1.18.24'
+    compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
